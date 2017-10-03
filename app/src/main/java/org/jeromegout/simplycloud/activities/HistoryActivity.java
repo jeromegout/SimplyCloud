@@ -1,6 +1,8 @@
-package org.jeromegout.simplycloud;
+package org.jeromegout.simplycloud.activities;
 
 import android.os.Bundle;
+
+import org.jeromegout.simplycloud.R;
 
 public class HistoryActivity extends BaseActivity {
 
