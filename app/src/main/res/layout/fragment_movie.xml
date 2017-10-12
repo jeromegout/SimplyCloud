@@ -11,4 +11,5 @@
 		android:id="@+id/textView_movie"
 		android:layout_gravity="center_horizontal"/>
 
+
 </LinearLayout>

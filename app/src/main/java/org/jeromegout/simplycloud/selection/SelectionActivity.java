@@ -1,28 +1,43 @@
-package org.jeromegout.simplycloud.activities;
+package org.jeromegout.simplycloud.selection;
 
 
+import android.Manifest;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 
+import com.andremion.counterfab.CounterFab;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.listener.single.PermissionListener;
+import com.karumi.dexter.listener.single.SnackbarOnDeniedPermissionListener;
 
 import org.jeromegout.simplycloud.R;
-import org.jeromegout.simplycloud.fragments.FileFragment;
-import org.jeromegout.simplycloud.fragments.MovieFragment;
-import org.jeromegout.simplycloud.fragments.PhotoFragment;
+import org.jeromegout.simplycloud.activities.BaseActivity;
+import org.jeromegout.simplycloud.selection.fragments.FileFragment;
+import org.jeromegout.simplycloud.selection.fragments.MovieFragment;
+import org.jeromegout.simplycloud.selection.fragments.PhotoFragment;
+import org.jeromegout.simplycloud.selection.fragments.SelectionBaseFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SelectionActivity extends BaseActivity {
+public class SelectionActivity extends BaseActivity implements SelectionBaseFragment.Callbacks,
+		View.OnClickListener {
+
+	private static final String TITLE_STATE = "title_state";
+
 
 	private TabLayout tabLayout;
 	private ViewPager viewPager;
+	private CounterFab counterFab;
 
 	class ViewPagerAdapter extends FragmentPagerAdapter {
 		private final List<Fragment> mFragmentList = new ArrayList<>();
@@ -56,6 +71,7 @@ public class SelectionActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		viewPager = (ViewPager) findViewById(R.id.viewpager);
 
 		tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -84,6 +100,33 @@ public class SelectionActivity extends BaseActivity {
 					}
 				}
 		);
+		counterFab = (CounterFab) findViewById(R.id.counter_fab);
+		counterFab.setOnClickListener(this);
+
+		if (savedInstanceState == null) {
+			setResult(RESULT_CANCELED);
+			checkPermissions();
+
+		} else {
+			setToolbarTitle(savedInstanceState.getString(TITLE_STATE));
+		}
+	}
+
+	private void checkPermissions() {
+		PermissionListener listener = SnackbarOnDeniedPermissionListener.Builder
+				.with(viewPager, "We need access to your storage")
+				.withOpenSettingsButton("Settings")
+				.build();
+		Dexter.withActivity(this)
+				.withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+				.withListener(listener)
+				.check();
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putCharSequence(TITLE_STATE, getToolbarTitle());
 	}
 
 	@Override
@@ -98,4 +141,24 @@ public class SelectionActivity extends BaseActivity {
 		adapter.addFragment(new FileFragment(), "File");
 		viewPager.setAdapter(adapter);
 	}
+
+	@Override
+	public void onBucketClick(String label) {
+	}
+
+	@Override
+	public void onItemClick(@NonNull View view, View checkView, long bucketId, int position) {
+		counterFab.setCount(counterFab.getCount()+position);
+	}
+
+	@Override
+	public void onSelectionUpdated(int count) {
+		counterFab.setCount(count);
+	}
+
+	@Override
+	public void onClick(View v) {
+		Snackbar.make(v, "Selection contains "+counterFab.getCount()+ " elements", Snackbar.LENGTH_LONG).show();
+	}
+
 }

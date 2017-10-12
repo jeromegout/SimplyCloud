@@ -32,4 +32,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void setToolbarTitle(String t) {
         getSupportActionBar().setTitle(t);
     }
+
+    public CharSequence getToolbarTitle() {
+        return getSupportActionBar().getTitle();
+    }
+
 }

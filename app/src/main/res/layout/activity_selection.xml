@@ -5,7 +5,7 @@
 	<!--xmlns:tools="http://schemas.android.com/tools"-->
 	<!--android:layout_width="match_parent"-->
 	<!--android:layout_height="match_parent"-->
-	<!--tools:context="org.jeromegout.simplycloud.activities.SelectionActivity">-->
+	<!--tools:context="org.jeromegout.simplycloud.selection.SelectionActivity">-->
 
 
 <android.support.design.widget.CoordinatorLayout
@@ -14,7 +14,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	tools:context="org.jeromegout.simplycloud.activities.SelectionActivity">
+	tools:context="org.jeromegout.simplycloud.selection.SelectionActivity">
 
 	<android.support.design.widget.AppBarLayout
 		android:layout_width="match_parent"
@@ -38,5 +38,13 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+	<com.andremion.counterfab.CounterFab
+		android:id="@+id/counter_fab"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="bottom|center_horizontal"
+		android:layout_margin="@dimen/fab_margin"
+		android:src="@drawable/ic_check_black_24dp" />
 
 </android.support.design.widget.CoordinatorLayout>
