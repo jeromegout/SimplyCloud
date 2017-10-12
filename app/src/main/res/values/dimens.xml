@@ -3,4 +3,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="selection_item_size">128dp</dimen>
+    <dimen name="selection_item_offset">1dp</dimen>
+    <dimen name="selection_item_check_padding">16dp</dimen>
+    <dimen name="selection_item_text_padding">8dp</dimen>
 </resources>

@@ -1,9 +1,12 @@
 package org.jeromegout.simplycloud.selection.fragments;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.View;
+
+import java.util.List;
 
 
 public class SelectionBaseFragment extends Fragment {
@@ -17,6 +20,9 @@ public class SelectionBaseFragment extends Fragment {
 		void onSelectionUpdated(int count);
 
 	}
+
+
+	protected static List<Uri> selection;
 
 	protected Callbacks callbacks;
 

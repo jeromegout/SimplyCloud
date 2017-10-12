@@ -77,9 +77,9 @@ public class SelectionActivity extends BaseActivity implements SelectionBaseFrag
 		tabLayout = (TabLayout) findViewById(R.id.tabs);
 		tabLayout.setupWithViewPager(viewPager);
 		setViewPager(viewPager);
-		tabLayout.getTabAt(0).setIcon(R.drawable.ic_movie_selection);
-		tabLayout.getTabAt(1).setIcon(R.drawable.ic_photo_selection);
-		tabLayout.getTabAt(2).setIcon(R.drawable.ic_file_selection);
+		tabLayout.getTabAt(0).setIcon(R.drawable.ic_movie_selection_24dp);
+		tabLayout.getTabAt(1).setIcon(R.drawable.ic_photo_selection_24dp);
+		tabLayout.getTabAt(2).setIcon(R.drawable.ic_file_selection_24dp);
 		tabLayout.addOnTabSelectedListener(
 				new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
 					@Override
