@@ -13,11 +13,7 @@ public class SelectionBaseFragment extends Fragment {
 
 	public interface Callbacks {
 
-		void onBucketClick(String label);
-
-		void onItemClick(@NonNull View view, View checkView, long bucketId, int position);
-
-		void onSelectionUpdated(int count);
+		void onSelectionUpdated(int count, long totalSize);
 
 	}
 

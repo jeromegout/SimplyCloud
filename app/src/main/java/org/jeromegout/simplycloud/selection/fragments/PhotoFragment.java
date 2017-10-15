@@ -1,5 +1,7 @@
 package org.jeromegout.simplycloud.selection.fragments;
 
+import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -12,19 +14,35 @@ import android.view.ViewTreeObserver;
 import org.jeromegout.simplycloud.R;
 import org.jeromegout.simplycloud.selection.adapters.PhotoAdapter;
 
-public class PhotoFragment extends SelectionBaseFragment implements PhotoAdapter.Callbacks {
+public class PhotoFragment extends SelectionBaseFragment implements PhotoAdapter.Callbacks, PhotoLoader.Callbacks {
 
     private RecyclerView recyclerView;
     private View emptyView;
     private GridLayoutManager layoutManager;
     private PhotoAdapter photoAdapter;
+    private PhotoLoader photoLoader;
+
 
 	public PhotoFragment(){
+        photoLoader = new PhotoLoader();
         photoAdapter = new PhotoAdapter();
         photoAdapter.setCallbacks(this);
     }
 
-	@Override
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        //- register the activity (parent activity in loader in order to create cursorLoader
+        photoLoader.onAttach(getActivity(), this);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        photoLoader.onDetach();
+    }
+
+    @Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -40,7 +58,6 @@ public class PhotoFragment extends SelectionBaseFragment implements PhotoAdapter
 		View view = inflater.inflate(R.layout.fragment_photo, container, false);
         emptyView = view.findViewById(android.R.id.empty);
         layoutManager = new GridLayoutManager(getContext(), 1);
-//        adapter.setLayoutManager(mLayoutManager);
 
         initRecyclerView(view);
 
@@ -81,7 +98,7 @@ public class PhotoFragment extends SelectionBaseFragment implements PhotoAdapter
 
     @Override
     public void onBucketClick(long bucketId, String label) {
-
+        photoLoader.loadPhotoBucket(bucketId);
     }
 
     @Override
@@ -91,6 +108,16 @@ public class PhotoFragment extends SelectionBaseFragment implements PhotoAdapter
 
     @Override
     public void onSelectionUpdated(int count) {
+
+    }
+
+    @Override
+    public void onBucketLoadFinished(Cursor data) {
+        photoAdapter.setData(data);
+    }
+
+    @Override
+    public void onMediaLoadFinished(Cursor data) {
 
     }
 }

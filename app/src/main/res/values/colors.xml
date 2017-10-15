@@ -8,4 +8,6 @@
 	<color name="colorSecondaryText">#757575</color>
 	<color name="colorTabSelectedIcon">#FFFFFFFF</color>
 	<color name="colorTabUnselectedIcon">#B2FFFFFF</color>
+    <color name="selection_bucket_text_background">#66000000</color>
+
 </resources>
