@@ -106,7 +106,6 @@ public class SelectionActivity extends BaseActivity implements SelectionBaseFrag
 		if (savedInstanceState == null) {
 			setResult(RESULT_CANCELED);
 			checkPermissions();
-
 		} else {
 			setToolbarTitle(savedInstanceState.getString(TITLE_STATE));
 		}
@@ -143,16 +142,7 @@ public class SelectionActivity extends BaseActivity implements SelectionBaseFrag
 	}
 
 	@Override
-	public void onBucketClick(String label) {
-	}
-
-	@Override
-	public void onItemClick(@NonNull View view, View checkView, long bucketId, int position) {
-		counterFab.setCount(counterFab.getCount()+position);
-	}
-
-	@Override
-	public void onSelectionUpdated(int count) {
+	public void onSelectionUpdated(int count, long totalSize) {
 		counterFab.setCount(count);
 	}
 
