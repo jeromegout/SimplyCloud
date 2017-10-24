@@ -5,18 +5,23 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import org.jeromegout.simplycloud.selection.fragments.FileUtil;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+
+;
 
 public class SelectionModel {
 
     private final List<Uri> selection;
+    private long selectionSize;
     public final static SelectionModel instance = new SelectionModel();
     private final List<SelectionListener> listeners;
-
 
     private SelectionModel() {
         this.selection = new ArrayList<>();
@@ -26,6 +31,7 @@ public class SelectionModel {
     public void clearSelection() {
         if (!selection.isEmpty()) {
             selection.clear();
+            selectionSize = 0;
             notifyListeners();
         }
     }
@@ -33,7 +39,10 @@ public class SelectionModel {
     public void setSelection(@NonNull List<Uri> sel) {
         if (!selection.equals(sel)) {
             selection.clear();
-            selection.addAll(sel);
+            for (Uri uri : sel) {
+                selection.add(uri);
+                selectionSize += FileUtil.getFileSize(uri);
+            }
             notifyListeners();
         }
     }
@@ -45,21 +54,31 @@ public class SelectionModel {
 
     private void notifyListeners() {
         for (SelectionListener listener : listeners) {
-            listener.selectionChanged();
+            listener.selectionChanged(selection.size(), selectionSize);
         }
     }
 
     public void selectElement(@NonNull Uri element) {
         if(!selection.contains(element)) {
             selection.add(element);
+            selectionSize += FileUtil.getFileSize(element);
             notifyListeners();
         }
+    }
+    
+    public void selectElement(@NonNull URI uri) {
+        selectElement(Uri.parse(uri.toString()));
     }
 
     public void unselectElement(@NonNull Uri element) {
         if(selection.remove(element)) {
+            selectionSize -= FileUtil.getFileSize(element);
             notifyListeners();
         }
+    }
+
+    public void unselectElement(URI uri) {
+        unselectElement(Uri.parse(uri.toString()));
     }
 
     //- Listeners
@@ -76,7 +95,7 @@ public class SelectionModel {
     //- listener for model changes.
     public interface SelectionListener {
 
-        void selectionChanged();
+        void selectionChanged(int count, long amount);
     }
 
     public static long getURISize(Context context, Uri uri) {

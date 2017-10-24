@@ -4,7 +4,6 @@ package org.jeromegout.simplycloud.selection;
 import android.Manifest;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -22,14 +21,13 @@ import com.karumi.dexter.listener.single.SnackbarOnDeniedPermissionListener;
 import org.jeromegout.simplycloud.R;
 import org.jeromegout.simplycloud.activities.BaseActivity;
 import org.jeromegout.simplycloud.selection.fragments.FileFragment;
+import org.jeromegout.simplycloud.selection.fragments.FileUtil;
 import org.jeromegout.simplycloud.selection.fragments.MovieFragment;
-import org.jeromegout.simplycloud.selection.fragments.PhotoFragment;
-import org.jeromegout.simplycloud.selection.fragments.SelectionBaseFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SelectionActivity extends BaseActivity implements SelectionBaseFragment.Callbacks,
+public class SelectionActivity extends BaseActivity implements SelectionModel.SelectionListener,
 		View.OnClickListener {
 
 	private static final String TITLE_STATE = "title_state";
@@ -78,8 +76,8 @@ public class SelectionActivity extends BaseActivity implements SelectionBaseFrag
 		tabLayout.setupWithViewPager(viewPager);
 		setViewPager(viewPager);
 		tabLayout.getTabAt(0).setIcon(R.drawable.ic_movie_selection_24dp);
-		tabLayout.getTabAt(1).setIcon(R.drawable.ic_photo_selection_24dp);
-		tabLayout.getTabAt(2).setIcon(R.drawable.ic_file_selection_24dp);
+//		tabLayout.getTabAt(1).setIcon(R.drawable.ic_photo_selection_24dp);
+		tabLayout.getTabAt(1).setIcon(R.drawable.ic_file_selection_24dp);
 		tabLayout.addOnTabSelectedListener(
 				new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
 					@Override
@@ -136,19 +134,25 @@ public class SelectionActivity extends BaseActivity implements SelectionBaseFrag
 	private void setViewPager(ViewPager viewPager) {
 		ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 		adapter.addFragment(new MovieFragment(), "Movie");
-		adapter.addFragment(new PhotoFragment(),"Photo");
+//		adapter.addFragment(new PhotoFragment(),"Photo");
 		adapter.addFragment(new FileFragment(), "File");
 		viewPager.setAdapter(adapter);
 	}
-
-	@Override
-	public void onSelectionUpdated(int count, long totalSize) {
-		counterFab.setCount(count);
-	}
-
 	@Override
 	public void onClick(View v) {
 		Snackbar.make(v, "Selection contains "+counterFab.getCount()+ " elements", Snackbar.LENGTH_LONG).show();
 	}
 
+	@Override
+	public void selectionChanged(int count, long amount) {
+		counterFab.setCount(count);
+		Snackbar.make(viewPager.getRootView(), "Selection size is "+ FileUtil.getReadableSize(amount), Snackbar.LENGTH_SHORT)
+			.show();
+	}
+
+	@Override
+	public void onAttachedToWindow() {
+		super.onAttachedToWindow();
+		SelectionModel.instance.addSelectionListener(this);
+	}
 }

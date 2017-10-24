@@ -56,11 +56,12 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
     private String getLabel(int position) {
         assert data != null; // It is supposed not be null here
         data.moveToPosition(position);
-        if (mViewType == VIEW_TYPE_MEDIA) {
-            return data.getString(data.getColumnIndex(MediaStore.Images.ImageColumns.DISPLAY_NAME));
-        } else {
-            return data.getString(data.getColumnIndex(MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME));
-        }
+//        if (mViewType == VIEW_TYPE_MEDIA) {
+//            return data.getString(data.getColumnIndex(MediaStore.Images.ImageColumns.DISPLAY_NAME));
+//        } else {
+//            return data.getString(data.getColumnIndex(MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME));
+//        }
+        return  "";
     }
 
     private Uri getData(int position) {
@@ -133,16 +134,16 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
 
             if (v == checkView) {
                 boolean selectionChanged = handleChangeSelection(position);
-                if (selectionChanged) {
-                    notifyItemChanged(position, SELECTION_PAYLOAD);
-                }
-                if (callbacks != null) {
-                    if (selectionChanged) {
-                        callbacks.onSelectionUpdated(selection.size());
-                    } else {
-                        mCallbacks.onMaxSelectionReached();
-                    }
-                }
+//                if (selectionChanged) {
+//                    notifyItemChanged(position, SELECTION_PAYLOAD);
+//                }
+//                if (callbacks != null) {
+//                    if (selectionChanged) {
+//                        callbacks.onSelectionUpdated(selection.size());
+//                    } else {
+//                        mCallbacks.onMaxSelectionReached();
+//                    }
+//                }
             } else {
 //                if (mCallbacks != null) {
 //                    mCallbacks.onMediaClick(mImageView, checkView, getBucketId(position), position);
@@ -153,14 +154,14 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
 
     private boolean handleChangeSelection(int position) {
         Uri data = getData(position);
-        if (!isSelected(position)) {
-            if (mSelection.size() == mMaxSelection) {
-                return false;
-            }
-            mSelection.add(data);
-        } else {
-            mSelection.remove(data);
-        }
+//        if (!isSelected(position)) {
+//            if (mSelection.size() == mMaxSelection) {
+//                return false;
+//            }
+//            mSelection.add(data);
+//        } else {
+//            mSelection.remove(data);
+//        }
         return true;
     }
 

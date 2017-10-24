@@ -1,14 +1,44 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-			  android:orientation="vertical"
-			  android:layout_width="match_parent"
-			  android:layout_height="match_parent">
-	<TextView
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				xmlns:tools="http://schemas.android.com/tools"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				tools:ignore="RtlHardcoded">
+
+	<ImageButton
+		android:id="@+id/previous_dir_imagebutton"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:textAppearance="?android:attr/textAppearanceLarge"
-		android:text="File Fragment"
-		android:id="@+id/textView_file"
-		android:layout_gravity="center_horizontal"/>
+		android:layout_alignParentLeft="true"
+		android:layout_marginLeft="5dp"
+		android:layout_marginTop="5dp"
+		android:layout_marginBottom="5dp"
+		android:background="@drawable/ic_arrow_back_black_24dp"
+		tools:ignore="ContentDescription"/>
 
-</LinearLayout>
+	<TextView
+		android:id="@+id/current_dir_textview"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_above="@+id/fragment_file"
+		android:layout_marginLeft="10dp"
+		android:layout_toRightOf="@id/previous_dir_imagebutton"
+		android:gravity="center_vertical"
+		android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+	<!-- Separator -->
+	<View
+		android:id="@+id/seprator"
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:background="@color/colorSecondaryText"
+		android:layout_below="@+id/previous_dir_imagebutton"/>
+
+
+	<!-- Recycler -->
+	<android.support.v7.widget.RecyclerView
+		android:id="@+id/fragment_file"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_below="@+id/seprator"/>
+
+</RelativeLayout>

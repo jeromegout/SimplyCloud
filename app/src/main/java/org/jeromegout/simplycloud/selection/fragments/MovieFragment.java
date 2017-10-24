@@ -1,13 +1,14 @@
 package org.jeromegout.simplycloud.selection.fragments;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import org.jeromegout.simplycloud.R;
 
-public class MovieFragment extends SelectionBaseFragment {
+public class MovieFragment extends Fragment {
 
 	public MovieFragment(){}
 

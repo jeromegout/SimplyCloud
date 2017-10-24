@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				xmlns:tools="http://schemas.android.com/tools"
+				android:layout_width="match_parent"
+				android:layout_height="48dp"
+				android:background="?selectableItemBackground"
+				tools:ignore="RtlHardcoded">
+
+	<CheckBox
+		android:id="@+id/item_file_checkbox"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_centerVertical="true"
+		/>
+
+	<ImageView
+		android:id="@+id/item_icon_imageview"
+		android:layout_width="36dp"
+		android:layout_height="36dp"
+		android:layout_centerVertical="true"
+		android:layout_toRightOf="@+id/item_file_checkbox"
+		android:src="@drawable/ic_file_pdf"
+		tools:ignore="ContentDescription"/>
+
+	<RelativeLayout
+		android:id="@+id/texts"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_toRightOf="@id/item_icon_imageview"
+		android:layout_centerVertical="true"
+		android:layout_marginLeft="8dp"
+		android:layout_marginRight="8dp"
+
+		>
+
+		<TextView
+			android:id="@+id/item_filename"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:ellipsize="middle"
+			android:maxLines="1"
+			android:text="ExempleRemunerationAnneeIncompleteAMA.pdf"
+			android:textAppearance="?android:textAppearanceMedium"
+			android:textSize="14sp"
+			android:textStyle="bold"/>
+
+		<TextView
+			android:id="@+id/item_file_details"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/item_filename"
+			android:layout_marginTop="5dp"
+			android:gravity="center_vertical"
+			android:text="99 KO"
+			android:textSize="12sp"/>
+	</RelativeLayout>
+
+
+
+</RelativeLayout>
