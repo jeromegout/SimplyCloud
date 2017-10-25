@@ -2,8 +2,11 @@ package org.jeromegout.simplycloud.selection;
 
 
 import android.Manifest;
+import android.content.Intent;
 import android.graphics.PorterDuff;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -23,6 +26,7 @@ import org.jeromegout.simplycloud.activities.BaseActivity;
 import org.jeromegout.simplycloud.selection.fragments.FileFragment;
 import org.jeromegout.simplycloud.selection.fragments.FileUtil;
 import org.jeromegout.simplycloud.selection.fragments.MovieFragment;
+import org.jeromegout.simplycloud.send.FreeSendActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,14 +144,30 @@ public class SelectionActivity extends BaseActivity implements SelectionModel.Se
 	}
 	@Override
 	public void onClick(View v) {
-		Snackbar.make(v, "Selection contains "+counterFab.getCount()+ " elements", Snackbar.LENGTH_LONG).show();
+		long selectionSize = SelectionModel.instance.getSelectionSize();
+		List<Uri> selection = SelectionModel.instance.getSelection();
+		String msg = String.format("%d selected files (%s/%s)",
+				selection.size(),
+				FileUtil.getReadableSize(selectionSize),
+				FileUtil.getReadableSize(FileUtil.getAvailableInternalMemorySize()));
+		Snackbar.make(v, msg, Snackbar.LENGTH_SHORT).show();
+		if(selection.size() > 0) {
+			Intent intent = new Intent(getApplicationContext(), FreeSendActivity.class);
+			intent.putExtra("size", selectionSize);
+			Bundle bundle = new Bundle();
+			bundle.putParcelableArrayList("selection", (ArrayList<? extends Parcelable>) selection);
+			intent.putExtras(bundle);
+			startActivity(intent);
+		}
 	}
 
 	@Override
 	public void selectionChanged(int count, long amount) {
 		counterFab.setCount(count);
-		Snackbar.make(viewPager.getRootView(), "Selection size is "+ FileUtil.getReadableSize(amount), Snackbar.LENGTH_SHORT)
-			.show();
+		if(amount > 0) {
+			Snackbar.make(viewPager.getRootView(), "Selection size is "+ FileUtil.getReadableSize(amount), Snackbar.LENGTH_SHORT)
+					.show();
+		}
 	}
 
 	@Override

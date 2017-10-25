@@ -22,7 +22,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileHolder> {
 	@Override
 	public FileHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-		return new FileHolder(listener, inflater.inflate(R.layout.item_file, parent, false));
+		return new FileHolder(listener, inflater.inflate(R.layout.item_file_selection, parent, false));
 	}
 
 	@Override

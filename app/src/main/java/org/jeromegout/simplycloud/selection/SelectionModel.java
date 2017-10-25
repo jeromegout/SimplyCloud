@@ -51,6 +51,9 @@ public class SelectionModel {
         return new ArrayList<>(selection);
     }
 
+    public long getSelectionSize() {
+        return selectionSize;
+    }
 
     private void notifyListeners() {
         for (SelectionListener listener : listeners) {

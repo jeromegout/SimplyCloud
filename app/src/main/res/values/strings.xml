@@ -1,4 +1,4 @@
 <resources>
 	<string name="app_name">SimplyCloud</string>
-    <string name="activity_gallery_no_images">No photos</string>
+	<string name="activity_gallery_no_images">No photos</string>
 </resources>

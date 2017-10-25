@@ -59,13 +59,30 @@ public class FileItem extends File {
 		return 0;
 	}
 
-	public boolean isSelected() {
+	private boolean isFileSelected(File file) {
 		List<Uri> currentSel = SelectionModel.instance.getSelection();
 		for (Uri uri : currentSel) {
-			if(getAbsolutePath().equals(uri.getPath())) {
+			if (file.getAbsolutePath().equals(uri.getPath())) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public boolean isSelected() {
+		if(isDirectory()) {
+			File[] files = getDirectoryFiles();
+			if (files.length == 0) return false;
+			else {
+				for (File file : files) {
+					if (!isFileSelected(file)) {
+						return false;
+					}
+				}
+				return true;
+			}
+		} else {
+			return isFileSelected(this);
+		}
 	}
 }

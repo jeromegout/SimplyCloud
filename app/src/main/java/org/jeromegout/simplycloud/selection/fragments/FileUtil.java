@@ -4,6 +4,8 @@ package org.jeromegout.simplycloud.selection.fragments;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Environment;
+import android.os.StatFs;
 import android.support.v4.content.ContextCompat;
 import android.webkit.MimeTypeMap;
 
@@ -69,5 +71,29 @@ public class FileUtil {
 			type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
 		}
 		return type;
+	}
+
+	public static boolean externalMemoryAvailable() {
+		return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+	}
+
+	public static long getAvailableInternalMemorySize() {
+		File path = Environment.getDataDirectory();
+		StatFs stat = new StatFs(path.getPath());
+		long blockSize = stat.getBlockSizeLong();
+		long availableBlocks = stat.getAvailableBlocksLong();
+		return availableBlocks * blockSize;
+	}
+
+	public static long getAvailableExternalMemorySize() {
+		if (externalMemoryAvailable()) {
+			File path = Environment.getExternalStorageDirectory();
+			StatFs stat = new StatFs(path.getPath());
+			long blockSize = stat.getBlockSizeLong();
+			long availableBlocks = stat.getAvailableBlocksLong();
+			return availableBlocks * blockSize;
+		} else {
+			return -1;
+		}
 	}
 }
