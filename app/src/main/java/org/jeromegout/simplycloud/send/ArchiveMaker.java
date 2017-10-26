@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.widget.ProgressBar;
 
+import org.jeromegout.simplycloud.R;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -35,7 +37,8 @@ public class ArchiveMaker extends AsyncTask<Void, Integer, File> {
 		BufferedInputStream origin;
 		File outputDir = context.getCacheDir();
 		try {
-			File outputFile = File.createTempFile("simplycloud_free", "zip", outputDir);
+			String appName = context.getResources().getString(R.string.app_name);
+			File outputFile = File.createTempFile(appName, "zip", outputDir);
 			ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)));
 			byte data[] = new byte[BUFFER];
 
@@ -59,7 +62,7 @@ public class ArchiveMaker extends AsyncTask<Void, Integer, File> {
 
 	@Override
 	protected void onProgressUpdate(Integer... progress) {
-		progressBar.setProgress(progress[0]);
+		progressBar.incrementProgressBy(progress[0]);
 	}
 
 	@Override
