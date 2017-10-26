@@ -1,5 +1,7 @@
 package org.jeromegout.simplycloud.send;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,7 +12,10 @@ import android.widget.TextView;
 
 import org.jeromegout.simplycloud.R;
 import org.jeromegout.simplycloud.selection.fragments.FileItem;
+import org.jeromegout.simplycloud.selection.fragments.FileUtil;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FileSendAdapter extends RecyclerView.Adapter<FileSendAdapter.Holder> {
@@ -28,7 +33,14 @@ public class FileSendAdapter extends RecyclerView.Adapter<FileSendAdapter.Holder
 		}
 	}
 
-	public FileSendAdapter(List<Uri> uris) {
+	public FileSendAdapter(List<Uri> uris, Context context) {
+		files = new ArrayList<>(uris.size());
+		File file;
+		for (Uri uri : uris ) {
+			file = new File(uri.getPath());
+			Drawable drawable = FileUtil.getDrawable(context, file);
+			files.add(new FileItem(uri.getLastPathSegment(), drawable));
+		}
 	}
 
 	@Override

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -27,13 +26,13 @@ public class FreeSendActivity extends BaseActivity implements ArchiveMaker.OnArc
 		if (getIntent().getExtras() != null) {
 			List<Uri> filesUri = getIntent().getExtras().getParcelableArrayList("selection");
 			RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-			FileSendAdapter fileAdapter = new FileSendAdapter(filesUri);
+			FileSendAdapter fileAdapter = new FileSendAdapter(filesUri, this);
 			recyclerView.setLayoutManager(new LinearLayoutManager(this));
 			recyclerView.setAdapter(fileAdapter);
 			progressBar = (ProgressBar) findViewById(R.id.progressBar);
 			progressBar.setMax((int) getIntent().getLongExtra("size", 0));
 			fab = (FloatingActionButton) findViewById(R.id.sendButton);
-			fab.setEnabled(false);
+			setEnableProgress(false);
 			makeArchive(filesUri);
 			fab.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -44,6 +43,10 @@ public class FreeSendActivity extends BaseActivity implements ArchiveMaker.OnArc
 		}
 	}
 
+	@Override
+	protected int getLayoutResource() {
+		return R.layout.activity_send;
+	}
 
 	private void makeArchive(List<Uri> filesUri) {
 		new ArchiveMaker(this, filesUri, progressBar, this).execute();
@@ -51,20 +54,21 @@ public class FreeSendActivity extends BaseActivity implements ArchiveMaker.OnArc
 
 	private void sendArchive(File zip) {
 		if(zip != null)  {
-			Log.d("DEBUG ======", zip.getAbsolutePath());
+			setEnableProgress(false);
+			new FreeTransfer(this, zipFile, progressBar, this).execute();
 		}
 	}
 
-	@Override
-	protected int getLayoutResource() {
-		return R.layout.activity_send;
+	private void setEnableProgress(boolean enabled) {
+		fab.setVisibility(enabled ? View.VISIBLE : View.GONE);
 	}
 
 	@Override
 	public void onArchiveCreated(File archive) {
 		if(archive != null) {
-			fab.setEnabled(true);
+			setEnableProgress(true);
 			zipFile = archive;
 		}
 	}
+
 }
