@@ -20,13 +20,24 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_toRightOf="@id/item_icon_imageview"
+        android:layout_toLeftOf="@id/item_file_size"
 		android:layout_centerVertical="true"
 		android:layout_marginLeft="8dp"
 		android:ellipsize="middle"
-		android:maxLines="1"
-		android:text="ExempleRemunerationAnneeIncompleteAMA.pdf"
-		android:textAppearance="?android:textAppearanceMedium"
+        android:text="ExempleRemunerationAnneeIncompleteAMA.pdf"
+		android:textAppearance="?android:textAppearanceListItem"
 		android:textSize="14sp"
-		/>
+        android:singleLine="true"/>
+
+    <TextView
+        android:id="@+id/item_file_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="4 MB"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="8dp"
+        android:textSize="12sp"
+        />
 
 </RelativeLayout>

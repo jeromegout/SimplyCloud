@@ -1,66 +1,49 @@
 package org.jeromegout.simplycloud.send;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.widget.ProgressBar;
 
-import org.jeromegout.simplycloud.R;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+import java.util.Calendar;
 
-public class FreeTransfer extends AsyncTask<Void, Integer, File> {
+public class FreeTransfer extends AsyncTask<Void, Integer, UploadInfo> {
 
-	private final OnArchiveCreatedListener listener;
-	private final List<Uri> files;
+    private final OnArchiveSentListener listener;
+	private final File archive;
 	private Context context;
 	private ProgressBar progressBar;
 
-	public FreeTransfer(Context context, File, ProgressBar pb, OnArchiveSentListener listener) {
+	public FreeTransfer(Context context, File archive, ProgressBar pb, OnArchiveSentListener listener) {
 		this.context = context;
 		this.progressBar = pb;
 		this.listener = listener;
-		this.files = files;
+		this.archive = archive;
 	}
 
+    @Override
+    protected void onPreExecute() {
+        progressBar.setProgress(0);
+        progressBar.setMax(100);
+    }
 
-
-	@Override
-	protected File doInBackground(Void... params) {
-		final int BUFFER = 2048;
-		BufferedInputStream origin;
-		File outputDir = context.getCacheDir();
-		try {
-			String appName = context.getResources().getString(R.string.app_name);
-			File outputFile = File.createTempFile(appName, "zip", outputDir);
-			ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)));
-			byte data[] = new byte[BUFFER];
-
-			for(Uri uri : files) {
-				origin = new BufferedInputStream(new FileInputStream(uri.getPath()), BUFFER);
-				ZipEntry entry = new ZipEntry(uri.getLastPathSegment());
-				zos.putNextEntry(entry);
-				int count;
-				while ((count = origin.read(data, 0, BUFFER)) != -1) {
-					zos.write(data, 0, count);
-					publishProgress(count);
-				}
-				origin.close();
-			}
-			return outputFile;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+    @Override
+	protected UploadInfo doInBackground(Void... params) {
+        for (int i = 0; i < 100; i++) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            publishProgress(1);
+        }
+        Calendar date = Calendar.getInstance();
+        date.setTimeInMillis(1509046557);
+        return new UploadInfo("http://dl.free.fr/lsGq2kjQW",
+                "http://dl.free.fr/rm.pl?h=lsGq2kjQW&i=84448806&s=K5zQ1QYBKI36GdNtf7YsboAbYKWsuM1h&f=1",
+                "dl.free.fr",
+                date);
+    }
 
 	@Override
 	protected void onProgressUpdate(Integer... progress) {
@@ -68,9 +51,9 @@ public class FreeTransfer extends AsyncTask<Void, Integer, File> {
 	}
 
 	@Override
-	protected void onPostExecute(File file) {
+	protected void onPostExecute(UploadInfo info) {
 		if(listener != null) {
-			listener.onArchiveCreated(file);
+			listener.onArchiveSent(info);
 		}
 	}
 

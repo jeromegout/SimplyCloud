@@ -34,26 +34,25 @@
 
 		>
 
-		<TextView
-			android:id="@+id/item_filename"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentLeft="true"
-			android:ellipsize="middle"
-			android:maxLines="1"
-			android:text="ExempleRemunerationAnneeIncompleteAMA.pdf"
-			android:textAppearance="?android:textAppearanceMedium"
-			android:textSize="14sp"
-			android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/item_filename"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:ellipsize="middle"
+            android:singleLine="true"
+            android:text="ExempleRemunerationAnneeIncompleteAMA.pdf"
+            android:textAppearance="?android:textAppearanceListItem"
+            android:textSize="14sp"/>
 
 		<TextView
 			android:id="@+id/item_file_details"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_below="@id/item_filename"
-			android:layout_marginTop="5dp"
+			android:layout_marginTop="2dp"
 			android:gravity="center_vertical"
-			android:text="99 KO"
+            android:text="99 KO"
 			android:textSize="12sp"/>
 	</RelativeLayout>
 

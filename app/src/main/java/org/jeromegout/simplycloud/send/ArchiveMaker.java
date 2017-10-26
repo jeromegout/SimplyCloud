@@ -19,7 +19,8 @@ import java.util.zip.ZipOutputStream;
 
 public class ArchiveMaker extends AsyncTask<Void, Integer, File> {
 
-	private final OnArchiveCreatedListener listener;
+    private static final String HOSTER_NAME = "dl.free.fr";
+    private final OnArchiveCreatedListener listener;
 	private final List<Uri> files;
 	private Context context;
 	private ProgressBar progressBar;
@@ -37,7 +38,7 @@ public class ArchiveMaker extends AsyncTask<Void, Integer, File> {
 		BufferedInputStream origin;
 		File outputDir = context.getCacheDir();
 		try {
-			String appName = context.getResources().getString(R.string.app_name);
+            String appName = context.getResources().getString(R.string.app_name)+'_'+HOSTER_NAME+'_';
 			File outputFile = File.createTempFile(appName, "zip", outputDir);
 			ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)));
 			byte data[] = new byte[BUFFER];

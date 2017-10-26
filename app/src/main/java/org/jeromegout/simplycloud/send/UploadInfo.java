@@ -1,11 +1,15 @@
 package org.jeromegout.simplycloud.send;
 
-class UploadInfo {
+import java.util.Calendar;
+
+public class UploadInfo {
 
 	public String downloadLink;
 	public String deleteLink;
 	public String fullPage;
 	public String firstError;
+	public String host;
+	public Calendar uploadedDate;
 
 	public String getFullPage() {
 		return fullPage;
@@ -15,7 +19,9 @@ class UploadInfo {
 		this.fullPage = fullPage;
 	}
 
-	public UploadInfo(String downloadLink, String deleteLink) {
+	public UploadInfo(String downloadLink, String deleteLink, String host, Calendar date) {
+	    this.host = host;
+	    this.uploadedDate = date;
 		this.firstError = null;
 		if(downloadLink != null) {
 			this.downloadLink = downloadLink.replaceAll("&amp;", "&");

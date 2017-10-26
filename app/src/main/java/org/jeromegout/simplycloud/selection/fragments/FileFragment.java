@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -49,7 +50,8 @@ public class FileFragment extends Fragment implements View.OnClickListener, File
 		directoryName = (TextView) view.findViewById(R.id.current_dir_textview);
 		fileAdapter = new FileAdapter(this);
 		recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-		recyclerView.setAdapter(fileAdapter);
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+        recyclerView.setAdapter(fileAdapter);
 		//- init with root directory
 		loadItemsFromDirectory(Environment.getExternalStorageDirectory().getPath());
 		return view;

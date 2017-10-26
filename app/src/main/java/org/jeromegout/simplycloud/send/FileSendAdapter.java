@@ -25,11 +25,13 @@ public class FileSendAdapter extends RecyclerView.Adapter<FileSendAdapter.Holder
 	class Holder extends RecyclerView.ViewHolder {
 		ImageView icon;
 		TextView name;
+		TextView size;
 
 		public Holder(View view) {
 			super(view);
 			name = (TextView) view.findViewById(R.id.item_filename);
 			icon = (ImageView) view.findViewById(R.id.item_icon_imageview);
+			size = (TextView) view.findViewById(R.id.item_file_size);
 		}
 	}
 
@@ -39,7 +41,7 @@ public class FileSendAdapter extends RecyclerView.Adapter<FileSendAdapter.Holder
 		for (Uri uri : uris ) {
 			file = new File(uri.getPath());
 			Drawable drawable = FileUtil.getDrawable(context, file);
-			files.add(new FileItem(uri.getLastPathSegment(), drawable));
+			files.add(new FileItem(uri.getPath(), drawable));
 		}
 	}
 
@@ -54,6 +56,7 @@ public class FileSendAdapter extends RecyclerView.Adapter<FileSendAdapter.Holder
 		FileItem item = files.get(position);
 		holder.icon.setImageDrawable(item.getIcon());
 		holder.name.setText(item.getName());
+		holder.size.setText(FileUtil.getReadableFileSize(item));
 	}
 
 	@Override
