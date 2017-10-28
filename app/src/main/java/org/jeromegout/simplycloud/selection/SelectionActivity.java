@@ -18,8 +18,8 @@ import android.view.View;
 
 import com.andremion.counterfab.CounterFab;
 import com.karumi.dexter.Dexter;
-import com.karumi.dexter.listener.single.PermissionListener;
-import com.karumi.dexter.listener.single.SnackbarOnDeniedPermissionListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.karumi.dexter.listener.multi.SnackbarOnAnyDeniedMultiplePermissionsListener;
 
 import org.jeromegout.simplycloud.R;
 import org.jeromegout.simplycloud.activities.BaseActivity;
@@ -114,12 +114,13 @@ public class SelectionActivity extends BaseActivity implements SelectionModel.Se
 	}
 
 	private void checkPermissions() {
-		PermissionListener listener = SnackbarOnDeniedPermissionListener.Builder
-				.with(viewPager, "We need access to your storage")
+		MultiplePermissionsListener listener = SnackbarOnAnyDeniedMultiplePermissionsListener.Builder
+				.with(viewPager, "Storage and Internet permission is needed")
 				.withOpenSettingsButton("Settings")
 				.build();
 		Dexter.withActivity(this)
-				.withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+				.withPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+					Manifest.permission.INTERNET)
 				.withListener(listener)
 				.check();
 	}

@@ -36,5 +36,4 @@ public abstract class BaseActivity extends AppCompatActivity {
     public CharSequence getToolbarTitle() {
         return getSupportActionBar().getTitle();
     }
-
 }

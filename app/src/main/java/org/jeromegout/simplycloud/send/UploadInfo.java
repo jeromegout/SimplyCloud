@@ -8,8 +8,8 @@ public class UploadInfo {
 	public String deleteLink;
 	public String fullPage;
 	public String firstError;
-	public String host;
-	public Calendar uploadedDate;
+	public String hostId;
+	public Calendar uploadDate;
 
 	public String getFullPage() {
 		return fullPage;
@@ -19,10 +19,9 @@ public class UploadInfo {
 		this.fullPage = fullPage;
 	}
 
-	public UploadInfo(String downloadLink, String deleteLink, String host, Calendar date) {
-	    this.host = host;
-	    this.uploadedDate = date;
+	public UploadInfo(String downloadLink, String deleteLink, String host) {
 		this.firstError = null;
+		this.hostId = host;
 		if(downloadLink != null) {
 			this.downloadLink = downloadLink.replaceAll("&amp;", "&");
 		} else {
