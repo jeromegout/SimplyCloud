@@ -39,10 +39,10 @@ public class FileSendAdapter extends RecyclerView.Adapter<FileSendAdapter.Holder
 		files = new ArrayList<>(uris.size());
 		File file;
 		for (Uri uri : uris ) {
-			file = new File(uri.getPath());
-			Drawable drawable = FileUtil.getDrawable(context, file);
-			files.add(new FileItem(uri.getPath(), drawable));
-		}
+            file = new File(uri.getPath());
+            Drawable drawable = FileUtil.getDrawable(context, file);
+            files.add(new FileItem(uri.getPath(), drawable));
+        }
 	}
 
 	@Override
