@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="54dp">
+
+    <ImageView
+        android:id="@+id/dateImage"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="4dp"
+        android:src="@drawable/ic_today_black_24dp"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="8dp"
+        android:layout_toEndOf="@+id/dateImage"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/uploadTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="14 files (45 MB)"
+            android:textAppearance="?android:textAppearanceListItem"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            />
+
+        <TextView
+            android:id="@+id/uploadDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/uploadTitle"
+            android:layout_marginTop="2dp"
+            android:gravity="center_vertical"
+            android:text="5/13/2017-4:56"
+            android:textSize="12sp"
+            />
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

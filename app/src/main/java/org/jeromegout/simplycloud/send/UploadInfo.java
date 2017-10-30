@@ -1,17 +1,20 @@
 package org.jeromegout.simplycloud.send;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Calendar;
 
-public class UploadInfo {
+public class UploadInfo implements Parcelable {
 
 	public String downloadLink;
 	public String deleteLink;
 	public String fullPage;
-	public String firstError;
+	String firstError;
 	public String hostId;
 	public Calendar uploadDate;
 
-	public String getFullPage() {
+    public String getFullPage() {
 		return fullPage;
 	}
 
@@ -52,4 +55,38 @@ public class UploadInfo {
 	public void setError(String error) {
 		this.firstError = error;
 	}
+
+    protected UploadInfo(Parcel in) {
+        downloadLink = in.readString();
+        deleteLink = in.readString();
+        fullPage = in.readString();
+        firstError = in.readString();
+        hostId = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(downloadLink);
+        dest.writeString(deleteLink);
+        dest.writeString(fullPage);
+        dest.writeString(firstError);
+        dest.writeString(hostId);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<UploadInfo> CREATOR = new Creator<UploadInfo>() {
+        @Override
+        public UploadInfo createFromParcel(Parcel in) {
+            return new UploadInfo(in);
+        }
+
+        @Override
+        public UploadInfo[] newArray(int size) {
+            return new UploadInfo[size];
+        }
+    };
 }

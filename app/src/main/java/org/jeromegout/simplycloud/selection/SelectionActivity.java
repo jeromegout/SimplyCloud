@@ -154,7 +154,6 @@ public class SelectionActivity extends BaseActivity implements SelectionModel.Se
 		Snackbar.make(v, msg, Snackbar.LENGTH_SHORT).show();
 		if(selection.size() > 0) {
 			Intent intent = new Intent(getApplicationContext(), FreeSendActivity.class);
-			intent.putExtra("size", selectionSize);
 			Bundle bundle = new Bundle();
 			bundle.putParcelableArrayList("selection", (ArrayList<? extends Parcelable>) selection);
 			intent.putExtras(bundle);

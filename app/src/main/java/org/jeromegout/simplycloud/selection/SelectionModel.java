@@ -95,12 +95,6 @@ public class SelectionModel {
         return listeners.remove(listener);
     }
 
-    //- listener for model changes.
-    public interface SelectionListener {
-
-        void selectionChanged(int count, long amount);
-    }
-
     public static long getURISize(Context context, Uri uri) {
         try (InputStream is = context.getContentResolver().openInputStream(uri)) {
             return is.available();
@@ -110,6 +104,12 @@ public class SelectionModel {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    //- listener for model changes.
+    public interface SelectionListener {
+
+        void selectionChanged(int count, long amount);
     }
 
 }
