@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.View;
 
 import org.jeromegout.simplycloud.EmptyRecyclerView;
@@ -36,6 +37,11 @@ public class HistoryActivity extends BaseActivity {
                 createNewUpload();
             }
         });
+        if(savedInstanceState != null) {
+            Log.d("=== DEBUG ===", "saved state != null");
+        } else {
+            Log.d("=== DEBUG ===", "saved state empty");
+        }
     }
 
     private void createNewUpload() {
@@ -50,14 +56,13 @@ public class HistoryActivity extends BaseActivity {
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
         List<UploadItem> savedHistories = savedInstanceState.getParcelableArrayList("histories");
         HistoryModel.instance.setHistories(savedHistories);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
         outState.putParcelableArrayList("histories", (ArrayList<? extends Parcelable>) HistoryModel.instance.getHistories());
+        super.onSaveInstanceState(outState);
     }
 }

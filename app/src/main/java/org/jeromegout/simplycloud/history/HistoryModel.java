@@ -11,19 +11,23 @@ public class HistoryModel implements Parcelable {
     public final static HistoryModel instance = new HistoryModel();
 
     private List<UploadItem> histories;
+    private List<OnHistoryModelChangedistener> listeners;
 
     private HistoryModel() {
         histories = new ArrayList<>();
+        listeners = new ArrayList<>();
     }
 
     public void addHistory(UploadItem item) {
         if(! histories.contains(item)) {
             histories.add(item);
+            notifyListeners();
         }
     }
 
     public void removeHistory(UploadItem item) {
         histories.remove(item);
+        notifyListeners();
     }
 
     protected HistoryModel(Parcel in) {
@@ -54,6 +58,7 @@ public class HistoryModel implements Parcelable {
 
     public void setHistories(List<UploadItem> histories) {
         this.histories = histories;
+        notifyListeners();
     }
 
     public List<UploadItem> getHistories() {
@@ -65,5 +70,28 @@ public class HistoryModel implements Parcelable {
             return histories.get(position);
         }
         return null;
+    }
+
+    void addOnHistoryModelChangedListener(OnHistoryModelChangedistener listener) {
+        if(!listeners.contains(listener)) {
+            listeners.add(listener);
+        }
+    }
+
+    void removeHistoryModelChangedListener(OnHistoryModelChangedistener listener) {
+        listeners.remove(listener);
+    }
+
+    void notifyListeners() {
+        for (OnHistoryModelChangedistener listerner : listeners) {
+            listerner.onHistoryModelChanged();
+        }
+    }
+
+    //- notification listener
+    interface OnHistoryModelChangedistener {
+
+        void onHistoryModelChanged();
+
     }
 }

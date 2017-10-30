@@ -21,16 +21,17 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 
-public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> {
+public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> implements HistoryModel.OnHistoryModelChangedistener {
 
 
     private final Context context;
 
     class Holder extends RecyclerView.ViewHolder {
+
         ImageView dateIcon;
+
         TextView uploadTitle;
         TextView uploadDetails;
-
         Holder(View itemView) {
             super(itemView);
             dateIcon = (ImageView) itemView.findViewById(R.id.dateImage);
@@ -38,7 +39,6 @@ public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> {
             uploadDetails = (TextView) itemView.findViewById(R.id.uploadDetails);
 
         }
-
         public void bind(final UploadItem item) {
             Calendar date = item.getInfo().uploadDate;
             dateIcon.setImageDrawable(createIcon(date));
@@ -52,12 +52,29 @@ public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> {
                 }
             });
         }
+
     }
 
     public UploadAdapter(Context context) {
         this.context = context;
     }
 
+    @Override
+    public void onHistoryModelChanged() {
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        HistoryModel.instance.addOnHistoryModelChangedListener(this);
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        HistoryModel.instance.removeHistoryModelChangedListener(this);
+    }
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {

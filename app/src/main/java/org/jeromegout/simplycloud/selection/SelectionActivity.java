@@ -178,4 +178,10 @@ public class SelectionActivity extends BaseActivity implements SelectionModel.Se
 		super.onAttachedToWindow();
 		SelectionModel.instance.addSelectionListener(this);
 	}
+
+    @Override
+    public void onDetachedFromWindow() {
+        SelectionModel.instance.removeSelectionListener(this);
+        super.onDetachedFromWindow();
+    }
 }
