@@ -13,6 +13,8 @@ import org.jeromegout.simplycloud.R;
 import org.jeromegout.simplycloud.activities.BaseActivity;
 import org.jeromegout.simplycloud.selection.SelectionActivity;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +23,6 @@ public class HistoryActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 
         EmptyRecyclerView recyclerView = (EmptyRecyclerView)findViewById(R.id.historyRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -37,11 +38,8 @@ public class HistoryActivity extends BaseActivity {
                 createNewUpload();
             }
         });
-        if(savedInstanceState != null) {
-            Log.d("=== DEBUG ===", "saved state != null");
-        } else {
-            Log.d("=== DEBUG ===", "saved state empty");
-        }
+        //- uploadadpter listens model changes so we can restore the model now.
+        HistoryModel.instance.restoreHistories(this);
     }
 
     private void createNewUpload() {
@@ -54,15 +52,4 @@ public class HistoryActivity extends BaseActivity {
 		return R.layout.activity_history;
 	}
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        List<UploadItem> savedHistories = savedInstanceState.getParcelableArrayList("histories");
-        HistoryModel.instance.setHistories(savedHistories);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList("histories", (ArrayList<? extends Parcelable>) HistoryModel.instance.getHistories());
-        super.onSaveInstanceState(outState);
-    }
 }

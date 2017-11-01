@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 
-public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> implements HistoryModel.OnHistoryModelChangedistener {
+public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> implements HistoryModel.OnHistoryModelChangedListener {
 
 
     private final Context context;
