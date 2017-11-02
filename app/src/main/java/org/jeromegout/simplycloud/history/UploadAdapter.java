@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.jeromegout.simplycloud.R;
+import org.jeromegout.simplycloud.selection.fragments.FileUtil;
 import org.jeromegout.simplycloud.send.FreeSendActivity;
 
 import java.text.DateFormat;
@@ -42,7 +43,7 @@ public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> i
         public void bind(final UploadItem item) {
             Calendar date = item.getInfo().uploadDate;
             dateIcon.setImageDrawable(createIcon(date));
-            uploadTitle.setText(item.getContent().size()+" files ("+item.getSize()+")");
+            uploadTitle.setText(String.format("%d files (%d)", item.getContent().size(), FileUtil.getReadableSize(item.getSize())));
             DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(context);
             uploadDetails.setText(dateFormat.format(date.getTime()));
             itemView.setOnClickListener(new View.OnClickListener() {
