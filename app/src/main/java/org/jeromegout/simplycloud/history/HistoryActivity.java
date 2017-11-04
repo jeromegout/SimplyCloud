@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.View;
@@ -29,7 +30,7 @@ public class HistoryActivity extends BaseActivity {
 
         View emptyView = findViewById(R.id.noHistoriesView);
         recyclerView.setEmptyView(emptyView);
-
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         recyclerView.setAdapter(new UploadAdapter(this));
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.addUploadButton);
         fab.setOnClickListener(new View.OnClickListener() {

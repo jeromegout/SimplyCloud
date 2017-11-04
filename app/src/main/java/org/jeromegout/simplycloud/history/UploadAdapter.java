@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,10 +14,9 @@ import android.widget.TextView;
 
 import org.jeromegout.simplycloud.R;
 import org.jeromegout.simplycloud.selection.fragments.FileUtil;
-import org.jeromegout.simplycloud.send.FreeSendActivity;
+import org.jeromegout.simplycloud.share.ShareActivity;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 
 
@@ -30,22 +28,23 @@ public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> i
     class Holder extends RecyclerView.ViewHolder {
 
         ImageView dateIcon;
-
         TextView uploadTitle;
         TextView uploadDetails;
+        TextView uploadDate;
+
         Holder(View itemView) {
             super(itemView);
             dateIcon = (ImageView) itemView.findViewById(R.id.dateImage);
             uploadTitle = (TextView) itemView.findViewById(R.id.uploadTitle);
             uploadDetails = (TextView) itemView.findViewById(R.id.uploadDetails);
-
+            uploadDate = (TextView) itemView.findViewById(R.id.uploadDate);
         }
+
         public void bind(final UploadItem item) {
-            Calendar date = item.getInfo().uploadDate;
-            dateIcon.setImageDrawable(createIcon(date));
-            uploadTitle.setText(String.format("%d files (%d)", item.getContent().size(), FileUtil.getReadableSize(item.getSize())));
-            DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(context);
-            uploadDetails.setText(dateFormat.format(date.getTime()));
+            dateIcon.setImageDrawable(createIcon(item.getInfo().uploadDate));
+            uploadTitle.setText(item.getTitle());
+            uploadDetails.setText(String.format("%d files (%s)", item.getContent().size(), item.getHumanReadableSize()));
+            uploadDate.setText(item.getHumanReadableTime());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -53,7 +52,6 @@ public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> i
                 }
             });
         }
-
     }
 
     public UploadAdapter(Context context) {
@@ -100,9 +98,9 @@ public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> i
     }
 
     private void openUploadHistory(UploadItem item) {
-        Intent intent = new Intent(context, FreeSendActivity.class);
+        Intent intent = new Intent(context, ShareActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("selection", (ArrayList<? extends Parcelable>) item.getContent());
+        bundle.putParcelable("uploadItem", item);
         intent.putExtras(bundle);
         context.startActivity(intent);
     }

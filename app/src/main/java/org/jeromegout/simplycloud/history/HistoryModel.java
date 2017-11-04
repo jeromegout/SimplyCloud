@@ -1,8 +1,6 @@
 package org.jeromegout.simplycloud.history;
 
 import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 
 import com.google.gson.Gson;

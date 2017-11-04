@@ -22,16 +22,18 @@ public class ArchiveMaker extends AsyncTask<Void, String, File> {
 
 	private final OnArchiveCreatedListener listener;
 	private final List<Uri> files;
-	private final TextView statusView;
-	private Context context;
+	private TextView statusView;
+    private final String title;
+    private Context context;
 	private ProgressBar progressBar;
 
-	public ArchiveMaker(Context context, List<Uri> files, ProgressBar pb, TextView statusView, OnArchiveCreatedListener listener) {
+	ArchiveMaker(Context context, List<Uri> files, String title, ProgressBar pb, TextView statusView, OnArchiveCreatedListener listener) {
 		this.context = context;
 		this.progressBar = pb;
 		this.statusView = statusView;
 		this.listener = listener;
 		this.files = files;
+		this.title = title;
 	}
 
 	@Override
@@ -40,7 +42,7 @@ public class ArchiveMaker extends AsyncTask<Void, String, File> {
 		BufferedInputStream origin;
 		File outputDir = context.getCacheDir();
 		try {
-			String appName = context.getResources().getString(R.string.app_name)+"-dl.free.fr-";
+			String appName = getArchiveName();
 			File outputFile = File.createTempFile(appName, ".zip", outputDir);
 			ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)));
 			byte data[] = new byte[BUFFER];
@@ -81,9 +83,21 @@ public class ArchiveMaker extends AsyncTask<Void, String, File> {
 		if(listener != null) {
 			listener.onArchiveCreated(file);
 		}
+		//- finish release references
+        context = null;
+		progressBar = null;
+		statusView = null;
 	}
 
-	//- to be notified when archive is created
+    private String getArchiveName() {
+	    if(title != null && title.length() > 0) {
+	        return title+"-dl.free.fr-";
+        } else {
+	        return context.getResources().getString(R.string.app_name)+"-dl.free.fr-";
+        }
+    }
+
+    //- to be notified when archive is created
 	interface OnArchiveCreatedListener {
 		void onArchiveCreated(File archive);
 	}

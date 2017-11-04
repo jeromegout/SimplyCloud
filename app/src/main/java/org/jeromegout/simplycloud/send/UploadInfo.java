@@ -62,6 +62,8 @@ public class UploadInfo implements Parcelable {
         fullPage = in.readString();
         firstError = in.readString();
         hostId = in.readString();
+        uploadDate = Calendar.getInstance();
+        uploadDate.setTimeInMillis(in.readLong());
     }
 
     @Override
@@ -71,6 +73,7 @@ public class UploadInfo implements Parcelable {
         dest.writeString(fullPage);
         dest.writeString(firstError);
         dest.writeString(hostId);
+        dest.writeLong(uploadDate.getTimeInMillis());
     }
 
     @Override

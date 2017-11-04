@@ -2,13 +2,17 @@ package org.jeromegout.simplycloud.send;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -18,21 +22,21 @@ import org.jeromegout.simplycloud.history.HistoryActivity;
 import org.jeromegout.simplycloud.history.HistoryModel;
 import org.jeromegout.simplycloud.history.UploadItem;
 import org.jeromegout.simplycloud.selection.fragments.FileUtil;
+import org.jeromegout.simplycloud.share.ShareActivity;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FreeSendActivity extends BaseActivity implements ArchiveMaker.OnArchiveCreatedListener,
 		FreeTransfer.OnArchiveSentListener {
 
 	private File zipFile;
-	private UploadInfo info;
 	private List<Uri> filesUri;
     private ProgressBar progressBar;
 	private FloatingActionButton sendFab;
-	private FloatingActionButton shareFab;
 	private TextView statusView;
-    private MenuItem closeMenu;
+    private EditText titleEdit;
 
     @Override
 	protected void onStart() {
@@ -42,10 +46,12 @@ public class FreeSendActivity extends BaseActivity implements ArchiveMaker.OnArc
 			RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 			FileSendAdapter fileAdapter = new FileSendAdapter(filesUri, this);
 			recyclerView.setLayoutManager(new LinearLayoutManager(this));
-			recyclerView.setAdapter(fileAdapter);
+            recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+            recyclerView.setAdapter(fileAdapter);
 			progressBar = (ProgressBar) findViewById(R.id.progressBar);
 			progressBar.setMax((int) getSelectionSize());
 			statusView = (TextView) findViewById(R.id.statusView);
+			titleEdit = (EditText) findViewById(R.id.uploadTitle);
 			makeArchive(filesUri);
 			initFab();
 		}
@@ -68,14 +74,6 @@ public class FreeSendActivity extends BaseActivity implements ArchiveMaker.OnArc
 				sendArchive();
 			}
 		});
-		shareFab = (FloatingActionButton) findViewById(R.id.shareButton);
-		setEnableFab(shareFab, false);
-		shareFab.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				instantShare();
-			}
-		});
 	}
 
 	@Override
@@ -96,7 +94,7 @@ public class FreeSendActivity extends BaseActivity implements ArchiveMaker.OnArc
 	}
 
 	private void makeArchive(List<Uri> filesUri) {
-		new ArchiveMaker(this, filesUri, progressBar, statusView, this).execute();
+		new ArchiveMaker(this, filesUri, titleEdit.getText().toString(), progressBar, statusView, this).execute();
 	}
 
 	private void sendArchive() {
@@ -104,17 +102,6 @@ public class FreeSendActivity extends BaseActivity implements ArchiveMaker.OnArc
 			setEnableFab(sendFab, false);
 			new FreeTransfer(zipFile, statusView, this).execute();
 		}
-	}
-
-	private void instantShare() {
-		String shareBody = "Here is the link to download the files I want to share with you\n\n";
-		shareBody += info.downloadLink;
-		shareBody += "\n\n(sent with"+getResources().getString(R.string.app_name)+")";
-		Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-		sharingIntent.setType("text/plain");
-		sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Link");
-		sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-		startActivity(Intent.createChooser(sharingIntent, "Share using"));
 	}
 
 	private void setEnableFab(FloatingActionButton fab, boolean enabled) {
@@ -126,7 +113,7 @@ public class FreeSendActivity extends BaseActivity implements ArchiveMaker.OnArc
 		if(archive != null) {
 			setEnableFab(sendFab, true);
 			zipFile = archive;
-			statusView.setText("Packaging archive done");
+			statusView.setText("Packaging files done");
 			Log.d("====== DEBUG ZIP  ==== ", archive.getAbsolutePath());
 			Log.d("====== DEBUG SIZE ==== ", String.valueOf(archive.length()));
 		}
@@ -135,33 +122,17 @@ public class FreeSendActivity extends BaseActivity implements ArchiveMaker.OnArc
 	@Override
 	public void onArchiveSent(UploadInfo info) {
 		if(info != null) {
-			this.info = info;
-			setEnableFab(sendFab, false);
-			setEnableFab(shareFab, true);
-            HistoryModel.instance.addHistory(new UploadItem(filesUri, zipFile.length(), info));
-			closeMenu.setVisible(true);
+            UploadItem uploadItem = new UploadItem(filesUri, zipFile.length(), info, titleEdit.getText().toString());
+            HistoryModel.instance.addHistory(uploadItem);
+            //- invoke share activity
+            Intent intent = new Intent(this, ShareActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("uploadItem", uploadItem);
+            intent.putExtras(bundle);
+            startActivity(intent);
+
             Log.d("====== DEBUG DL  ===== ", info.downloadLink);
 			Log.d("====== DEBUG DEL ===== ", info.deleteLink);
 		}
 	}
-
-	//- Menu stuff
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_send, menu);
-        closeMenu = menu.findItem(R.id.close_send_activity);
-        closeMenu.setVisible(false);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.close_send_activity:
-                Intent intent = new Intent(this, HistoryActivity.class);
-                startActivity(intent);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }
