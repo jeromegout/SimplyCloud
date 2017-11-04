@@ -50,6 +50,7 @@ public class ShareActivity extends BaseActivity {
                 share();
             }
         });
+
     }
 
     @Override
