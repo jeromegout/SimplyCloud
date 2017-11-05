@@ -3,14 +3,11 @@ package org.jeromegout.simplycloud.send;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -18,14 +15,13 @@ import android.widget.TextView;
 
 import org.jeromegout.simplycloud.R;
 import org.jeromegout.simplycloud.activities.BaseActivity;
-import org.jeromegout.simplycloud.history.HistoryActivity;
 import org.jeromegout.simplycloud.history.HistoryModel;
 import org.jeromegout.simplycloud.history.UploadItem;
+import org.jeromegout.simplycloud.hosts.free.FreeTransfer;
 import org.jeromegout.simplycloud.selection.fragments.FileUtil;
 import org.jeromegout.simplycloud.share.ShareActivity;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 public class FreeSendActivity extends BaseActivity implements ArchiveMaker.OnArchiveCreatedListener,
@@ -43,7 +39,8 @@ public class FreeSendActivity extends BaseActivity implements ArchiveMaker.OnArc
 		super.onStart();
 		if (getIntent().getExtras() != null) {
 			filesUri = getIntent().getExtras().getParcelableArrayList("selection");
-			RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+            String title = getIntent().getStringExtra("title");
+            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 			FileSendAdapter fileAdapter = new FileSendAdapter(filesUri, this);
 			recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
@@ -52,6 +49,9 @@ public class FreeSendActivity extends BaseActivity implements ArchiveMaker.OnArc
 			progressBar.setMax((int) getSelectionSize());
 			statusView = (TextView) findViewById(R.id.statusView);
 			titleEdit = (EditText) findViewById(R.id.uploadTitle);
+			if(title != null && title.length() > 0) {
+			    titleEdit.setText(title);
+            }
 			makeArchive(filesUri);
 			initFab();
 		}
@@ -114,8 +114,6 @@ public class FreeSendActivity extends BaseActivity implements ArchiveMaker.OnArc
 			setEnableFab(sendFab, true);
 			zipFile = archive;
 			statusView.setText("Packaging files done");
-			Log.d("====== DEBUG ZIP  ==== ", archive.getAbsolutePath());
-			Log.d("====== DEBUG SIZE ==== ", String.valueOf(archive.length()));
 		}
 	}
 

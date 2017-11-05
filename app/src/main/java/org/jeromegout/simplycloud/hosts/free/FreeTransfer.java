@@ -1,7 +1,9 @@
-package org.jeromegout.simplycloud.send;
+package org.jeromegout.simplycloud.hosts.free;
 
 import android.os.AsyncTask;
 import android.widget.TextView;
+
+import org.jeromegout.simplycloud.send.UploadInfo;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,14 +14,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
 
-class FreeTransfer extends AsyncTask<Void, String, UploadInfo> implements MultiPartPoster.OnProgressListener {
+public class FreeTransfer extends AsyncTask<Void, String, UploadInfo> implements MultiPartPoster.OnProgressListener {
 
 	public static final String FREE_HOST_ID = "dl.free.fr";
 	private final OnArchiveSentListener listener;
 	private final File archive;
-	private final TextView statusView;
+	private  TextView statusView;
 
-	FreeTransfer(File file, TextView statusView, OnArchiveSentListener listener) {
+	public FreeTransfer(File file, TextView statusView, OnArchiveSentListener listener) {
 		this.archive = file;
 		this.statusView = statusView;
 		this.listener = listener;
@@ -51,6 +53,8 @@ class FreeTransfer extends AsyncTask<Void, String, UploadInfo> implements MultiP
 		if(listener != null) {
 			listener.onArchiveSent(infos);
 		}
+		//- releaase reference
+        statusView = null;
 	}
 
 	/**
@@ -164,7 +168,7 @@ class FreeTransfer extends AsyncTask<Void, String, UploadInfo> implements MultiP
 	}
 
 	//- to be notified when archive is sent to dl.free.fr server
-	interface OnArchiveSentListener {
+    public interface OnArchiveSentListener {
 		void onArchiveSent(UploadInfo info);
 	}
 }

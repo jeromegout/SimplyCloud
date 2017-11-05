@@ -92,7 +92,20 @@ public class UploadItem implements Parcelable {
         return DateFormat.getTimeInstance().format(info.uploadDate.getTime());
     }
 
-    public String getTitle() {
+    public String getHumanReadableTitle() {
         return title != null && title.length() > 0 ? title : "Unnamed archive";
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof UploadItem){
+            UploadItem other = (UploadItem) obj;
+            return info.uploadDate.getTimeInMillis() == other.getInfo().uploadDate.getTimeInMillis();
+        }
+        return super.equals(obj);
     }
 }

@@ -10,7 +10,7 @@ public class UploadInfo implements Parcelable {
 	public String downloadLink;
 	public String deleteLink;
 	public String fullPage;
-	String firstError;
+	public String firstError;
 	public String hostId;
 	public Calendar uploadDate;
 

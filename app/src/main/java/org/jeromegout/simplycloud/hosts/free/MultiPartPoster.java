@@ -1,4 +1,4 @@
-package org.jeromegout.simplycloud.send;
+package org.jeromegout.simplycloud.hosts.free;
 
 
 import java.io.BufferedReader;

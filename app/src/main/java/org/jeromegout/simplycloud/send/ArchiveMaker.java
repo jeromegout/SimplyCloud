@@ -7,6 +7,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.jeromegout.simplycloud.R;
+import org.jeromegout.simplycloud.hosts.free.FreeTransfer;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -90,11 +91,13 @@ public class ArchiveMaker extends AsyncTask<Void, String, File> {
 	}
 
     private String getArchiveName() {
+	    String name;
 	    if(title != null && title.length() > 0) {
-	        return title+"-dl.free.fr-";
+	        name = title;
         } else {
-	        return context.getResources().getString(R.string.app_name)+"-dl.free.fr-";
+	        name = context.getResources().getString(R.string.app_name);
         }
+        return  name+"-"+ FreeTransfer.FREE_HOST_ID+"-";
     }
 
     //- to be notified when archive is created

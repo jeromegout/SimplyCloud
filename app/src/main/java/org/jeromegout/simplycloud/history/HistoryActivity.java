@@ -41,6 +41,7 @@ public class HistoryActivity extends BaseActivity {
         });
         //- uploadadpter listens model changes so we can restore the model now.
         HistoryModel.instance.restoreHistories(this);
+        setToolbarTitle("All uploads");
     }
 
     private void createNewUpload() {

@@ -26,8 +26,6 @@
 		android:src="@drawable/ic_free_logo"
 		android:contentDescription="logo"/>
 
-
-
         <TextView
             android:layout_below="@id/logo"
             android:id="@+id/uploadTitle"
