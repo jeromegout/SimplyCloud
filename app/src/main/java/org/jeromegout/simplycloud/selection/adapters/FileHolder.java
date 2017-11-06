@@ -15,6 +15,7 @@ import java.io.File;
 
 
 public class FileHolder extends RecyclerView.ViewHolder {
+	private final ImageView folderImage;
 	private ImageView fileImage;
 	private TextView fileName;
 	//- for folder, shows the number of child, for regular file shows its size
@@ -29,6 +30,7 @@ public class FileHolder extends RecyclerView.ViewHolder {
 		this.fileName = (TextView) itemView.findViewById(R.id.item_filename);
 		this.fileDetails = (TextView) itemView.findViewById(R.id.item_file_details);
 		this.selectionBox = (CheckBox) itemView.findViewById(R.id.item_file_checkbox);
+		this.folderImage = (ImageView) itemView.findViewById(R.id.dir_icon_inside);
 	}
 
 	public void bind(final FileItem item) {
@@ -53,6 +55,11 @@ public class FileHolder extends RecyclerView.ViewHolder {
  				}
 			}
 		});
+		if(item.isDirectory()) {
+			folderImage.setVisibility(View.VISIBLE);
+		} else {
+			folderImage.setVisibility(View.GONE);
+		}
 	}
 
 	protected void selectItem(FileItem item, boolean isChecked) {

@@ -25,10 +25,22 @@ public class FileItem extends File {
 
 	public String getDetails() {
 		if(isDirectory()) {
-			return String.format("with %d file(s)", getDirectoryFiles().length);
+			return String.format("Files: %d Folders: %d", getDirectoryFiles().length, getDirectoryFolders().length);
 		} else {
 			return FileUtil.getReadableFileSize(this);
 		}
+	}
+
+	private File[] getDirectoryFolders() {
+		if(isDirectory() && canRead()) {
+			return listFiles(new FileFilter() {
+				@Override
+				public boolean accept(File file) {
+					return file.canRead() && file.isDirectory();
+				}
+			});
+		}
+		return new File[0];
 	}
 
 	/**
@@ -56,7 +68,9 @@ public class FileItem extends File {
 		if (isFile() && pathname.isDirectory()) {
 			return 1;
 		}
-		return 0;
+		String name = getName().toLowerCase();
+		String other = pathname.getName().toLowerCase();
+		return name.compareTo(other);
 	}
 
 	private boolean isFileSelected(File file) {
