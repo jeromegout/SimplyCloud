@@ -1,13 +1,8 @@
 package org.jeromegout.simplycloud.send;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
-import org.jeromegout.simplycloud.R;
-import org.jeromegout.simplycloud.hosts.free.FreeTransfer;
+import android.support.annotation.NonNull;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -21,33 +16,32 @@ import java.util.zip.ZipOutputStream;
 
 public class ArchiveMaker extends AsyncTask<Void, String, File> {
 
-	private final OnArchiveCreatedListener listener;
-	private final List<Uri> files;
-	private TextView statusView;
-    private final String title;
-    private Context context;
-	private ProgressBar progressBar;
+	private OnArchiveCreationListener listener;
+	private List<Uri> files;
+	private File outputFile;
 
-	ArchiveMaker(Context context, List<Uri> files, String title, ProgressBar pb, TextView statusView, OnArchiveCreatedListener listener) {
-		this.context = context;
-		this.progressBar = pb;
-		this.statusView = statusView;
-		this.listener = listener;
+	public ArchiveMaker files(List<Uri> files) {
 		this.files = files;
-		this.title = title;
+		return this;
+	}
+
+	public ArchiveMaker into(File outputFile) {
+		this.outputFile = outputFile;
+		return this;
+	}
+
+	public ArchiveMaker withListener(@NonNull OnArchiveCreationListener listener){
+		this.listener = listener;
+		return this;
 	}
 
 	@Override
 	protected File doInBackground(Void... params) {
 		final int BUFFER = 2048;
 		BufferedInputStream origin;
-		File outputDir = context.getCacheDir();
 		try {
-			String appName = getArchiveName();
-			File outputFile = File.createTempFile(appName, ".zip", outputDir);
 			ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(outputFile)));
 			byte data[] = new byte[BUFFER];
-
 			for(Uri uri : files) {
 				publishProgress("Packaging file '"+uri.getLastPathSegment()+"'");
 				origin = new BufferedInputStream(new FileInputStream(uri.getPath()), BUFFER);
@@ -69,39 +63,25 @@ public class ArchiveMaker extends AsyncTask<Void, String, File> {
 	}
 
 	@Override
-	protected void onProgressUpdate(String... progress) {
-		String progres = progress[0];
-		if(progres.startsWith("#")) {
-			int nb = Integer.parseInt(progres.substring(1));
-			progressBar.incrementProgressBy(nb);
+	protected void onProgressUpdate(String... p) {
+		String progress = p[0];
+		if(progress.startsWith("#")) {
+			int nb = Integer.parseInt(progress.substring(1));
+			listener.onArchiveUpdate(nb);
 		} else {
-			statusView.setText(progres);
+			listener.onArchiveStepUpdate(progress);
 		}
 	}
 
 	@Override
 	protected void onPostExecute(File file) {
-		if(listener != null) {
-			listener.onArchiveCreated(file);
-		}
-		//- finish release references
-        context = null;
-		progressBar = null;
-		statusView = null;
+		listener.onArchiveCreated(file);
 	}
 
-    private String getArchiveName() {
-	    String name;
-	    if(title != null && title.length() > 0) {
-	        name = title;
-        } else {
-	        name = context.getResources().getString(R.string.app_name);
-        }
-        return  name+"-"+ FreeTransfer.FREE_HOST_ID+"-";
-    }
-
     //- to be notified when archive is created
-	interface OnArchiveCreatedListener {
+	interface OnArchiveCreationListener {
+		void onArchiveUpdate(int bytesNum);
+		void onArchiveStepUpdate(String step);
 		void onArchiveCreated(File archive);
 	}
 }

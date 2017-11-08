@@ -26,7 +26,7 @@ import org.jeromegout.simplycloud.activities.BaseActivity;
 import org.jeromegout.simplycloud.selection.fragments.FileFragment;
 import org.jeromegout.simplycloud.selection.fragments.FileUtil;
 import org.jeromegout.simplycloud.selection.fragments.MovieFragment;
-import org.jeromegout.simplycloud.send.FreeSendActivity;
+import org.jeromegout.simplycloud.send.UploadActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -153,7 +153,7 @@ public class SelectionActivity extends BaseActivity implements SelectionModel.Se
 				FileUtil.getReadableSize(FileUtil.getAvailableInternalMemorySize()));
 		Snackbar.make(v, msg, Snackbar.LENGTH_SHORT).show();
 		if(selection.size() > 0) {
-			Intent intent = new Intent(getApplicationContext(), FreeSendActivity.class);
+			Intent intent = new Intent(getApplicationContext(), UploadActivity.class);
 			Bundle bundle = new Bundle();
 			bundle.putParcelableArrayList("selection", (ArrayList<? extends Parcelable>) selection);
 			intent.putExtras(bundle);

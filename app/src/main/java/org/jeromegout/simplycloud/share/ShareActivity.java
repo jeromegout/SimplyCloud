@@ -20,7 +20,7 @@ import org.jeromegout.simplycloud.history.HistoryActivity;
 import org.jeromegout.simplycloud.history.HistoryModel;
 import org.jeromegout.simplycloud.history.UploadItem;
 import org.jeromegout.simplycloud.hosts.HostServices;
-import org.jeromegout.simplycloud.hosts.free.FreeUploadAPI;
+import org.jeromegout.simplycloud.hosts.free.FreeHost;
 import org.jeromegout.simplycloud.send.FileSendAdapter;
 import org.jeromegout.simplycloud.send.UploadInfo;
 
@@ -112,7 +112,7 @@ public class ShareActivity extends BaseActivity implements HostServices.OnListen
 
     private void _deleteUploadItem() {
         //- send the delete
-        FreeUploadAPI free = new FreeUploadAPI();
+        FreeHost free = new FreeHost();
         free.deleteArchive(this, item.getInfo().deleteLink, this);
     }
 

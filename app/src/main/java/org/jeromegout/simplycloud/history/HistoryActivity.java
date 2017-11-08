@@ -2,22 +2,16 @@ package org.jeromegout.simplycloud.history;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.View;
 
 import org.jeromegout.simplycloud.EmptyRecyclerView;
 import org.jeromegout.simplycloud.R;
 import org.jeromegout.simplycloud.activities.BaseActivity;
+import org.jeromegout.simplycloud.hosts.HostManager;
 import org.jeromegout.simplycloud.selection.SelectionActivity;
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 public class HistoryActivity extends BaseActivity {
 
@@ -42,6 +36,9 @@ public class HistoryActivity extends BaseActivity {
         //- uploadadpter listens model changes so we can restore the model now.
         HistoryModel.instance.restoreHistories(this);
         setToolbarTitle("All uploads");
+
+        //- init hosts
+		HostManager.instance.init();
     }
 
     private void createNewUpload() {

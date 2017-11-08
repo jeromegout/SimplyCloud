@@ -17,8 +17,8 @@ import android.widget.TextView;
 
 import org.jeromegout.simplycloud.R;
 import org.jeromegout.simplycloud.hosts.HostServices;
-import org.jeromegout.simplycloud.hosts.free.FreeUploadAPI;
-import org.jeromegout.simplycloud.send.FreeSendActivity;
+import org.jeromegout.simplycloud.hosts.free.FreeHost;
+import org.jeromegout.simplycloud.send.UploadActivity;
 import org.jeromegout.simplycloud.send.UploadInfo;
 import org.jeromegout.simplycloud.share.ShareActivity;
 
@@ -48,7 +48,7 @@ public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> i
             uploadSize = (TextView) itemView.findViewById(R.id.uploadSize);
         }
 
-        public void bind(final UploadItem item) {
+        void bind(final UploadItem item) {
             dateIcon.setImageDrawable(createIcon(item.getInfo().uploadDate));
             uploadTitle.setText(item.getHumanReadableTitle());
             uploadDetails.setText(String.format("%d files", item.getContent().size()));
@@ -107,7 +107,7 @@ public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> i
     }
 
     private void openUploadHistory(final UploadItem item) {
-        FreeUploadAPI free = new FreeUploadAPI();
+        FreeHost free = new FreeHost();
         free.archiveStillAlive(context, item.getInfo().downloadLink, new HostServices.OnListener() {
             @Override
             public void onUploadUpdate(String update) {
@@ -128,7 +128,7 @@ public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> i
     private void openSendItem(UploadItem item) {
         View rootView = ((Activity)context).getWindow().getDecorView().findViewById(android.R.id.content);
         Snackbar.make(rootView, "Upload is deprecated, need to send it again", Snackbar.LENGTH_SHORT).show();
-        Intent intent = new Intent(context, FreeSendActivity.class);
+        Intent intent = new Intent(context, UploadActivity.class);
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList("selection", (ArrayList<? extends Parcelable>) item.getContent());
         intent.putExtras(bundle);

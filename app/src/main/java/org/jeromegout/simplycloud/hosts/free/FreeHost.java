@@ -2,7 +2,6 @@ package org.jeromegout.simplycloud.hosts.free;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -11,15 +10,23 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.jeromegout.simplycloud.R;
 import org.jeromegout.simplycloud.hosts.HostServices;
 
 import java.io.File;
 
-public class FreeUploadAPI implements HostServices {
+public class FreeHost implements HostServices {
+
+    public static final String HOST_ID = "dl.free.fr";
 
     @Override
     public String getHostId() {
-        return "dl.free.fr";
+        return HOST_ID;
+    }
+
+    @Override
+    public int getHostLogoId() {
+        return R.drawable.ic_free_logo;
     }
 
     @Override
