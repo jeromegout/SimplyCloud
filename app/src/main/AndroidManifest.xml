@@ -34,6 +34,13 @@
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
         </activity>
+
+        <receiver android:name=".hosts.UploadReceiver">
+            <intent-filter>
+                <action android:name="org.jeromegout.simplycloud.uploadservice.broadcast.status" />
+            </intent-filter>
+
+        </receiver>
 	</application>
 
 </manifest>

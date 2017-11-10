@@ -3,6 +3,7 @@ package org.jeromegout.simplycloud.send;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,7 +22,6 @@ import org.jeromegout.simplycloud.history.HistoryModel;
 import org.jeromegout.simplycloud.history.UploadItem;
 import org.jeromegout.simplycloud.hosts.HostManager;
 import org.jeromegout.simplycloud.hosts.HostServices;
-import org.jeromegout.simplycloud.hosts.free.FreeTransfer;
 import org.jeromegout.simplycloud.selection.fragments.FileUtil;
 import org.jeromegout.simplycloud.share.ShareActivity;
 
@@ -41,32 +41,32 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
 	private HostServices currentHost;
 
 	@Override
-	protected void onStart() {
-		super.onStart();
+	protected void onCreate(@NonNull Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		this.currentHost = HostManager.instance.getCurrentHost();
+        this.currentHost = HostManager.instance.getCurrentHost();
 
-		if (getIntent().getExtras() != null) {
-			filesUri = getIntent().getExtras().getParcelableArrayList("selection");
+        if (getIntent().getExtras() != null) {
+            filesUri = getIntent().getExtras().getParcelableArrayList("selection");
             String title = getIntent().getStringExtra("title");
-			ImageView logo = (ImageView) findViewById(R.id.logo);
-			logo.setImageDrawable(getResources().getDrawable(currentHost.getHostLogoId()));
-			RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-			FileSendAdapter fileAdapter = new FileSendAdapter(filesUri, this);
-			recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            ImageView logo = findViewById(R.id.logo);
+            logo.setImageDrawable(getResources().getDrawable(currentHost.getHostLogoId()));
+            RecyclerView recyclerView = findViewById(R.id.recyclerView);
+            FileSendAdapter fileAdapter = new FileSendAdapter(filesUri, this);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
             recyclerView.setAdapter(fileAdapter);
-			progressBar = (ProgressBar) findViewById(R.id.progressBar);
-			progressBar.setMax((int) getSelectionSize());
-			statusView = (TextView) findViewById(R.id.statusView);
-			titleEdit = (EditText) findViewById(R.id.uploadTitle);
-			if(title != null && title.length() > 0) {
-			    titleEdit.setText(title);
+            progressBar = findViewById(R.id.progressBar);
+            progressBar.setMax((int) getSelectionSize());
+            statusView = findViewById(R.id.statusView);
+            titleEdit = findViewById(R.id.uploadTitle);
+            if (title != null && title.length() > 0) {
+                titleEdit.setText(title);
             }
-			makeArchive(filesUri);
-			initFab();
-		}
-	}
+            makeArchive(filesUri);
+            initFab();
+        }
+    }
 
 	private long getSelectionSize() {
 	    long size = 0;
@@ -77,7 +77,7 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
     }
 
 	private void initFab() {
-		sendFab = (FloatingActionButton) findViewById(R.id.sendButton);
+		sendFab = findViewById(R.id.sendButton);
 		setEnableFab(sendFab, false);
 		sendFab.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -112,11 +112,10 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
 				.execute();
 	}
 
-	private void sendArchive() {
+    private void sendArchive() {
 		if(zipFile != null)  {
 			setEnableFab(sendFab, false);
 			currentHost.uploadArchive(this, zipFile, this);
-			new FreeTransfer(zipFile, statusView, this).execute();
 		}
 	}
 
@@ -145,12 +144,13 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
 
 	@Override
 	public void onUploadUpdate(String update) {
-
+        statusView.setText(update);
 	}
 
 	@Override
 	public void onUploadFinished(UploadInfo info) {
 		if(info != null) {
+		    statusView.setText("Upload fully completed");
             UploadItem uploadItem = new UploadItem(filesUri, zipFile.length(), info, titleEdit.getText().toString());
             HistoryModel.instance.addHistory(uploadItem);
             //- invoke share activity

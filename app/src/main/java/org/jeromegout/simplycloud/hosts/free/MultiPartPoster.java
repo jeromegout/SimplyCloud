@@ -15,6 +15,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 class MultiPartPoster {
 
 	private static final String LINE_FEED = "\r\n";

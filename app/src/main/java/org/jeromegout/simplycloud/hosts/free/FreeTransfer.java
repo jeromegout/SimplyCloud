@@ -14,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
 
+@Deprecated
 public class FreeTransfer extends AsyncTask<Void, String, UploadInfo> implements MultiPartPoster.OnProgressListener {
 
 	public static final String FREE_HOST_ID = "dl.free.fr";

@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 26
     buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "org.jeromegout.simplycloud"
@@ -18,7 +18,8 @@ android {
         }
     }
 }
-def supportVersion = "25.4.0"
+
+def supportVersion = "26.+"
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -36,4 +37,5 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'com.android.volley:volley:1.0.0'
     compile 'net.gotev:uploadservice:3.4'
+    compile 'net.gotev:uploadservice-okhttp:3.4'
 }

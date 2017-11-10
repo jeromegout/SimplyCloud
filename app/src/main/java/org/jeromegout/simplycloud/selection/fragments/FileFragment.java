@@ -80,10 +80,12 @@ public class FileFragment extends Fragment implements View.OnClickListener, File
 				return file.canRead() && (file.isFile() || file.isDirectory());
 			}});
 		List<FileItem> items = new ArrayList<>();
-		for (File f : files) {
-			Drawable drawable = FileUtil.getDrawable(getActivity().getApplicationContext(), f);
-			items.add(new FileItem(f.getPath(), drawable));
-		}
+		if(files != null) {
+            for (File f : files) {
+                Drawable drawable = FileUtil.getDrawable(getActivity().getApplicationContext(), f);
+                items.add(new FileItem(f.getPath(), drawable));
+            }
+        }
 		Collections.sort(items);
 		fileAdapter.setItems(items);
 	}

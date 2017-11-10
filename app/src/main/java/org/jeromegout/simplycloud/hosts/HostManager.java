@@ -16,6 +16,7 @@ public class HostManager {
 
 	private HostManager() {
 		hosts = new HashMap<>();
+		init();
 	}
 
 	public void registerHost(HostServices host) {
@@ -48,6 +49,6 @@ public class HostManager {
 	 * Collects all hosts
 	 */
 	public void init() {
-		hosts.put(FreeHost.HOST_ID, new FreeHost());
+		registerHost(new FreeHost());
 	}
 }

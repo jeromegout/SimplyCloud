@@ -10,14 +10,28 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import net.gotev.uploadservice.ServerResponse;
+import net.gotev.uploadservice.UploadInfo;
+
+import org.jeromegout.simplycloud.Logging;
 import org.jeromegout.simplycloud.R;
 import org.jeromegout.simplycloud.hosts.HostServices;
+import org.jeromegout.simplycloud.hosts.Uploader;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Calendar;
 
-public class FreeHost implements HostServices {
+public class FreeHost extends Uploader implements HostServices {
 
     public static final String HOST_ID = "dl.free.fr";
+    private final static String FREE_URL = "http://dl.free.fr/upload.pl?b15059952545362975907183455737546";//$NON-NLS-1$
+
+    private OnListener completedListener;
 
     @Override
     public String getHostId() {
@@ -50,8 +64,22 @@ public class FreeHost implements HostServices {
     }
 
     @Override
-    public void uploadArchive(Context context, File archive, OnListener listener) {
+    public void uploadArchive(Context context, File archive, @NonNull final OnListener listener) {
+        upload(context, archive, FREE_URL);
+        completedListener = listener;
+    }
 
+    @Override
+    public void onUploadCompleted(Context context, UploadInfo info, ServerResponse response) {
+        super.onUploadCompleted(context, info, response);
+        //- post process to retrieve the upload info links
+        if(completedListener != null){
+            completedListener.onUploadUpdate("Archive uploaded on Free server, getting links");
+        }
+        org.jeromegout.simplycloud.send.UploadInfo links = getUploadInfos(context, uploadURL);
+        if(completedListener != null) {
+            completedListener.onUploadFinished(links);
+        }
     }
 
     @Override
@@ -86,5 +114,79 @@ public class FreeHost implements HostServices {
 
     private  boolean isContainingDeprecatedMarker(String page) {
         return page.contains("Fichier perim&eacute ou d&eacute;j&agrave; supprim&eacute;");
+    }
+
+    /**
+     * Given a monitoring url page, it returns the link of the uploaded file and the URL to delete it from server
+     *
+     * @param monURL monitoring URL (the URL that will contain download and delete links when finish)
+     * @return upload information (download and delete links)
+     * @throws IOException if an I/O exception occurs or if response code is not OK
+     */
+    private org.jeromegout.simplycloud.send.UploadInfo getUploadInfos(final Context context, final String monURL) {
+        final org.jeromegout.simplycloud.send.UploadInfo[] info = new org.jeromegout.simplycloud.send.UploadInfo[1];
+        final RequestQueue queue = Volley.newRequestQueue(context);
+
+        final StringRequest linksRequest = new StringRequest(Request.Method.GET, monURL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (isContainingRefreshMaker(response)) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    getUploadInfos(context, monURL);
+                } else {
+                    //- we reached the end of the page without finding the refresh marker
+                    //- we can return the collected info
+                    info[0] = findLinks(response);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+        queue.add(linksRequest);
+        return info[0];
+    }
+
+    private boolean isContainingRefreshMaker(String line) {
+        return line.trim().replaceAll(" ", "").contains("functiondoLoad(){setTimeout(\"refresh()\",2*1000);}");
+    }
+
+    private org.jeromegout.simplycloud.send.UploadInfo findLinks(String sb) {
+        org.jeromegout.simplycloud.send.UploadInfo info = new org.jeromegout.simplycloud.send.UploadInfo(null, null, HOST_ID);
+        int i = sb.indexOf("<a class=\"underline\" href=\"http://dl.free.fr/");
+        if(i != -1) {
+            int j = sb.indexOf("\" onclick=\"window.open('http://dl.free.fr/", i);
+            if(j != -1) {
+                String downloadURL = sb.substring(i+"<a class=\"underline\" href=\"".length(), j);
+                i = sb.indexOf("<a class=\"underline\" href=\"http://dl.free.fr/rm.pl?h=", j);
+                if(i != -1) {
+                    j = sb.indexOf("\" onclick=\"window.open('http://dl.free.fr/rm.pl?h=", i);
+                    if(j != -1) {
+                        String deleteURL = sb.substring(i+"<a class=\"underline\" href=\"".length(), j);
+                        info =  new org.jeromegout.simplycloud.send.UploadInfo(downloadURL, deleteURL+"&f=1", HOST_ID);
+                    } else {
+                        info.setError("End marker for delete link not found");
+                    }
+                } else {
+                    info.setError("Begin marker for delete link not found");
+                }
+            } else {
+                info.setError("End marker for download link not found");
+            }
+        } else {
+            info.setError("Begin marker for download link not found");
+        }
+        //- keep page content in case of problem occurred
+        if(info.hasError()) {
+            info.setFullPage(sb);
+        }
+        //- time stamp the result
+        info.uploadDate = Calendar.getInstance();
+        return info;
     }
 }
