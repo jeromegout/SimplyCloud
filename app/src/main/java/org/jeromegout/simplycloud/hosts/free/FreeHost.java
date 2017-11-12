@@ -18,12 +18,8 @@ import org.jeromegout.simplycloud.R;
 import org.jeromegout.simplycloud.hosts.HostServices;
 import org.jeromegout.simplycloud.hosts.Uploader;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Calendar;
 
 public class FreeHost extends Uploader implements HostServices {
@@ -76,6 +72,9 @@ public class FreeHost extends Uploader implements HostServices {
         if(completedListener != null){
             completedListener.onUploadUpdate("Archive uploaded on Free server, getting links");
         }
+        //- retrieving the monitoring url from the response
+        uploadURL =  response.getHeaders().get("Location");
+        Logging.d(uploadURL);
         org.jeromegout.simplycloud.send.UploadInfo links = getUploadInfos(context, uploadURL);
         if(completedListener != null) {
             completedListener.onUploadFinished(links);
@@ -132,7 +131,7 @@ public class FreeHost extends Uploader implements HostServices {
             public void onResponse(String response) {
                 if (isContainingRefreshMaker(response)) {
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(2000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

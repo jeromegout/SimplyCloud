@@ -24,6 +24,7 @@ public class Uploader {
                     .setMaxRetries(2);
             poster.startUpload();
             uploadURL = poster.getURL();
+
             UploadSessionManager.instance.registerUploadSession(uploadId, this);
         } catch (Exception e) {
             Logging.e(e.getMessage(), e);
