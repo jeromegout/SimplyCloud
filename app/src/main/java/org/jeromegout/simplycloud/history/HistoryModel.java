@@ -69,7 +69,7 @@ public class HistoryModel {
         if(saveModel) saveModel();
     }
 
-    public int getItemPosition(UploadItem item) {
+    int getItemPosition(UploadItem item) {
         return histories.indexOf(item);
     }
 
@@ -77,11 +77,11 @@ public class HistoryModel {
         setHistories(histories, true);
     }
 
-    public List<UploadItem> getHistories() {
+    List<UploadItem> getHistories() {
         return histories;
     }
 
-    public UploadItem getUpload(int position) {
+    UploadItem getUpload(int position) {
         if(position >= 0 && position < histories.size()) {
             return histories.get(position);
         }
@@ -134,7 +134,7 @@ public class HistoryModel {
         }
     }
 
-    public void restoreHistories(Context context) {
+    void restoreHistories(Context context) {
         try {
             this.context = context;
             FileInputStream fi = context.openFileInput("historyDB");

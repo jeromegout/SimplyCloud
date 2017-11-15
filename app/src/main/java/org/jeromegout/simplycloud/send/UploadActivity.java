@@ -1,6 +1,5 @@
 package org.jeromegout.simplycloud.send;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,7 +7,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -23,15 +21,13 @@ import org.jeromegout.simplycloud.history.UploadItem;
 import org.jeromegout.simplycloud.hosts.HostManager;
 import org.jeromegout.simplycloud.hosts.HostServices;
 import org.jeromegout.simplycloud.selection.fragments.FileUtil;
-import org.jeromegout.simplycloud.share.ShareActivity;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
-public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchiveCreationListener,
-		HostServices.OnListener {
+public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchiveCreationListener {
 
 	private File zipFile;
 	private List<Uri> filesUri;
@@ -120,6 +116,7 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
 			UploadItem uploadItem = new UploadItem(filesUri, zipFile.length(), titleEdit.getText().toString(), uploadId);
 			HistoryModel.instance.addHistory(uploadItem);
 			currentHost.uploadArchive(this, zipFile, uploadId);
+			finish();
 		}
 	}
 
@@ -147,31 +144,31 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
 		}
 	}
 
-	@Override
-	public void onUploadUpdate(String update) {
-        statusView.setText(update);
-	}
-
-	@Override
-	public void onUploadFinished(UploadLinks info) {
-		if(info != null) {
-		    statusView.setText("Upload fully completed");
-            UploadItem uploadItem = new UploadItem(filesUri, zipFile.length(), info, titleEdit.getText().toString());
-            HistoryModel.instance.addHistory(uploadItem);
-            //- invoke share activity
-            Intent intent = new Intent(this, ShareActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putParcelable("uploadItem", uploadItem);
-            intent.putExtras(bundle);
-            startActivity(intent);
-
-            Log.d("====== DEBUG DL  ===== ", info.downloadLink);
-			Log.d("====== DEBUG DEL ===== ", info.deleteLink);
-		}
-	}
-
-	@Override
-	public void onArchiveDeleted(boolean deletePerformed) {/* nop*/}
+//	@Override
+//	public void onUploadUpdate(String update) {
+//        statusView.setText(update);
+//	}
+//
+//	@Override
+//	public void onUploadFinished(UploadLinks info) {
+//		if(info != null) {
+//		    statusView.setText("Upload fully completed");
+//            UploadItem uploadItem = new UploadItem(filesUri, zipFile.length(), info, titleEdit.getText().toString());
+//            HistoryModel.instance.addHistory(uploadItem);
+//            //- invoke share activity
+//            Intent intent = new Intent(this, ShareActivity.class);
+//            Bundle bundle = new Bundle();
+//            bundle.putParcelable("uploadItem", uploadItem);
+//            intent.putExtras(bundle);
+//            startActivity(intent);
+//
+//            Log.d("====== DEBUG DL  ===== ", info.downloadLink);
+//			Log.d("====== DEBUG DEL ===== ", info.deleteLink);
+//		}
+//	}
+//
+//	@Override
+//	public void onArchiveDeleted(boolean deletePerformed) {/* nop*/}
 
 	private File getArchiveFile() {
 		File outputDir = getCacheDir();

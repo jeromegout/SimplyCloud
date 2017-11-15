@@ -6,6 +6,7 @@ import net.gotev.uploadservice.MultipartUploadRequest;
 
 import java.net.MalformedURLException;
 
+@Deprecated
 public class MultipartUploader extends MultipartUploadRequest {
 
     public MultipartUploader(Context context, String uploadId, String serverUrl) throws IllegalArgumentException, MalformedURLException {

@@ -158,6 +158,7 @@ public class SelectionActivity extends BaseActivity implements SelectionModel.Se
 			bundle.putParcelableArrayList("selection", (ArrayList<? extends Parcelable>) selection);
 			intent.putExtras(bundle);
 			startActivity(intent);
+			finish();
 		} else {
             Snackbar.make(v.getRootView(), "First, select something to share", Snackbar.LENGTH_SHORT)
                     .show();

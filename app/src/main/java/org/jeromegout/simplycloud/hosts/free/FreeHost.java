@@ -10,6 +10,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import net.gotev.uploadservice.MultipartUploadRequest;
 import net.gotev.uploadservice.ServerResponse;
 import net.gotev.uploadservice.UploadInfo;
 import net.gotev.uploadservice.UploadNotificationConfig;
@@ -18,12 +19,10 @@ import org.jeromegout.simplycloud.Logging;
 import org.jeromegout.simplycloud.R;
 import org.jeromegout.simplycloud.history.HistoryModel;
 import org.jeromegout.simplycloud.hosts.HostServices;
-import org.jeromegout.simplycloud.hosts.MultipartUploader;
 import org.jeromegout.simplycloud.hosts.Uploader;
 import org.jeromegout.simplycloud.send.UploadLinks;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Calendar;
 
 public class FreeHost extends Uploader implements HostServices {
@@ -65,7 +64,7 @@ public class FreeHost extends Uploader implements HostServices {
     public void uploadArchive(Context context, File archive, String uploadId) {
         startUpload(uploadId);
         try {
-            new MultipartUploader(context, uploadId, FREE_URL)
+            new MultipartUploadRequest(context, uploadId, FREE_URL)
                     .addFileToUpload(archive.getPath(), "ufile", archive.getName())
                     .setNotificationConfig(new UploadNotificationConfig())
                     .setMaxRetries(2)
@@ -82,8 +81,7 @@ public class FreeHost extends Uploader implements HostServices {
         String monURL = response.getHeaders().get("Location");
         Logging.d(monURL);
         //- retrieve links from the monitoring page
-        UploadLinks links = getUploadInfos(context, monURL);
-        HistoryModel.instance.setLinks(info.getUploadId(), links);
+        getUploadInfos(context, monURL, info.getUploadId());
     }
 
     @Override
@@ -124,11 +122,10 @@ public class FreeHost extends Uploader implements HostServices {
      * Given a monitoring url page, it returns the link of the uploaded file and the URL to delete it from server
      *
      * @param monURL monitoring URL (the URL that will contain download and delete links when finish)
+     * @param uploadId
      * @return upload information (download and delete links)
-     * @throws IOException if an I/O exception occurs or if response code is not OK
      */
-    private UploadLinks getUploadInfos(final Context context, final String monURL) {
-        final UploadLinks[] info = new UploadLinks[1];
+    private void getUploadInfos(final Context context, final String monURL, final String uploadId) {
         final RequestQueue queue = Volley.newRequestQueue(context);
 
         final StringRequest linksRequest = new StringRequest(Request.Method.GET, monURL, new Response.Listener<String>() {
@@ -138,13 +135,18 @@ public class FreeHost extends Uploader implements HostServices {
                     try {
                         Thread.sleep(2000);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        Logging.e(e.getMessage(), e);
                     }
-                    getUploadInfos(context, monURL);
+                    Logging.d("REFRESH !!!!!");
+                    // TODO update the item status (progress monitor) according to its uploadId
+                    getUploadInfos(context, monURL, uploadId);
                 } else {
+                    Logging.d("FINISHED !!!!!!");
+                    //TODO update the item status : finished in the model
                     //- we reached the end of the page without finding the refresh marker
                     //- we can return the collected info
-                    info[0] = findLinks(response);
+                    UploadLinks links = findLinks(response);
+                    HistoryModel.instance.setLinks(uploadId, links);
                 }
             }
         }, new Response.ErrorListener() {
@@ -153,7 +155,6 @@ public class FreeHost extends Uploader implements HostServices {
             }
         });
         queue.add(linksRequest);
-        return info[0];
     }
 
     private boolean isContainingRefreshMaker(String line) {

@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.jeromegout.simplycloud.R;
 import org.jeromegout.simplycloud.hosts.HostServices;
@@ -49,7 +50,7 @@ public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> i
         }
 
         void bind(final UploadItem item) {
-            dateIcon.setImageDrawable(createIcon(item.getLinks().uploadDate));
+            dateIcon.setImageDrawable(createIcon(item.getUploadDate()));
             uploadTitle.setText(item.getHumanReadableTitle());
             uploadDetails.setText(String.format("%d files", item.getContent().size()));
             uploadDate.setText(item.getHumanReadableDateTime());
@@ -113,21 +114,29 @@ public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> i
 
     private void openUploadHistory(final UploadItem item) {
         FreeHost free = new FreeHost();
-        free.archiveStillAlive(context, item.getLinks().downloadLink, new HostServices.OnListener() {
-            @Override
-            public void onUploadUpdate(String update) {
-                if(HostServices.OK.equals(update)) {
-                    openShareItem(item);
-                } else {
-                    //- no more archive on the server, need to upload it again
-                    openSendItem(item);
+        if(item.getLinks() == null) {
+            Toast.makeText(context, "Upload not yet completed ... please wait", Toast.LENGTH_SHORT).show();
+        } else {
+            free.archiveStillAlive(context, item.getLinks().downloadLink, new HostServices.OnListener() {
+                @Override
+                public void onUploadUpdate(String update) {
+                    if (HostServices.OK.equals(update)) {
+                        openShareItem(item);
+                    } else {
+                        //- no more archive on the server, need to upload it again
+                        openSendItem(item);
+                    }
                 }
-            }
-            @Override
-            public void onUploadFinished(UploadLinks info) {}
-            @Override
-            public void onArchiveDeleted(boolean deletePerformed) {}
-        });
+
+                @Override
+                public void onUploadFinished(UploadLinks info) {
+                }
+
+                @Override
+                public void onArchiveDeleted(boolean deletePerformed) {
+                }
+            });
+        }
     }
 
     private void openSendItem(UploadItem item) {

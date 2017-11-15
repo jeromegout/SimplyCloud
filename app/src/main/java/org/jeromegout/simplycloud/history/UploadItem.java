@@ -9,6 +9,8 @@ import org.jeromegout.simplycloud.send.UploadLinks;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class UploadItem implements Parcelable {
@@ -18,12 +20,13 @@ public class UploadItem implements Parcelable {
     private UploadLinks links;
     private String title;
     private String uploadId;
+    private Calendar startUploadDate;
 
     public UploadItem(List<Uri> uris, long size, String title, String uploadId) {
         this(uris, size, null, title, uploadId);
     }
 
-	public UploadItem(List<Uri> uris, long size, UploadLinks links, String title, String uploadId) {
+	private UploadItem(List<Uri> uris, long size, UploadLinks links, String title, String uploadId) {
 	    this.content = new ArrayList<>(uris.size());
         for (Uri uri: uris) {
             this.content.add(uri.getPath());
@@ -32,6 +35,7 @@ public class UploadItem implements Parcelable {
 	    this.size = size;
 	    this.title = title;
 	    this.uploadId = uploadId;
+	    this.startUploadDate = Calendar.getInstance();
     }
 
     protected UploadItem(Parcel in) {
@@ -40,6 +44,8 @@ public class UploadItem implements Parcelable {
         links = in.readParcelable(UploadLinks.class.getClassLoader());
         title = in.readString();
         uploadId = in.readString();
+        startUploadDate = Calendar.getInstance();
+        startUploadDate.setTimeInMillis(in.readLong());
     }
 
     @Override
@@ -49,6 +55,7 @@ public class UploadItem implements Parcelable {
         dest.writeParcelable(links, flags);
         dest.writeString(title);
         dest.writeString(uploadId);
+        dest.writeLong(startUploadDate.getTimeInMillis());
     }
 
     @Override
@@ -76,7 +83,7 @@ public class UploadItem implements Parcelable {
         return res;
     }
 
-    public void setLinks(UploadLinks links) {
+    void setLinks(UploadLinks links) {
         this.links = links;
     }
 
@@ -93,15 +100,19 @@ public class UploadItem implements Parcelable {
     }
 
     public String getHumanReadableDate() {
-        return DateFormat.getDateInstance().format(links.uploadDate.getTime());
+        return DateFormat.getDateInstance().format(getUploadDate().getTime());
     }
 
     public String getHumanReadableDateTime() {
-        return DateFormat.getDateTimeInstance().format(links.uploadDate.getTime());
+       return DateFormat.getDateTimeInstance().format(getUploadDate().getTime());
     }
 
     public String getHumanReadableTime() {
-        return DateFormat.getTimeInstance().format(links.uploadDate.getTime());
+        return DateFormat.getTimeInstance().format(getUploadDate().getTime());
+    }
+
+    public Calendar getUploadDate() {
+        return links != null && links.uploadDate != null ? links.uploadDate : startUploadDate;
     }
 
     public String getHumanReadableTitle() {
@@ -112,7 +123,7 @@ public class UploadItem implements Parcelable {
         return title;
     }
 
-    public String getUploadId() {
+    String getUploadId() {
         return uploadId;
     }
 
