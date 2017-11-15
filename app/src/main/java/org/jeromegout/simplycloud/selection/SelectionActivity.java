@@ -74,9 +74,9 @@ public class SelectionActivity extends BaseActivity implements SelectionModel.Se
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		viewPager = (ViewPager) findViewById(R.id.viewpager);
+		viewPager = findViewById(R.id.viewpager);
 
-		tabLayout = (TabLayout) findViewById(R.id.tabs);
+		tabLayout = findViewById(R.id.tabs);
 		tabLayout.setupWithViewPager(viewPager);
 		setViewPager(viewPager);
 		tabLayout.getTabAt(0).setIcon(R.drawable.ic_movie_selection_24dp);

@@ -19,14 +19,14 @@ public class HistoryActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-        EmptyRecyclerView recyclerView = (EmptyRecyclerView)findViewById(R.id.historyRecyclerView);
+        EmptyRecyclerView recyclerView = findViewById(R.id.historyRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         View emptyView = findViewById(R.id.noHistoriesView);
         recyclerView.setEmptyView(emptyView);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         recyclerView.setAdapter(new UploadAdapter(this));
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.addUploadButton);
+        FloatingActionButton fab = findViewById(R.id.addUploadButton);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

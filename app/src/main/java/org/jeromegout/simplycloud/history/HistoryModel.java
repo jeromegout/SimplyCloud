@@ -8,6 +8,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 
+import org.jeromegout.simplycloud.send.UploadLinks;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -28,19 +30,25 @@ public class HistoryModel {
     private List<OnHistoryModelChangedListener> listeners;
     private Context context;
 
-
     //- notification listener
     interface OnHistoryModelChangedListener {
 
+        /**
+         * Global notification. Model has changed, need a full update.
+         */
         void onHistoryModelChanged();
 
+
+        /**
+         * Item update
+         */
+        void onUploadItemChanged(UploadItem item);
     }
 
     private HistoryModel() {
         histories = new ArrayList<>();
         listeners = new ArrayList<>();
     }
-
     public void addHistory(UploadItem item) {
         if(! histories.contains(item)) {
             histories.add(item);
@@ -61,6 +69,10 @@ public class HistoryModel {
         if(saveModel) saveModel();
     }
 
+    public int getItemPosition(UploadItem item) {
+        return histories.indexOf(item);
+    }
+
     public void setHistories(List<UploadItem> histories) {
         setHistories(histories, true);
     }
@@ -76,6 +88,16 @@ public class HistoryModel {
         return null;
     }
 
+    public void setLinks(String uploadId, UploadLinks links) {
+        for (UploadItem item : histories) {
+            if(item.getUploadId().equals(uploadId)) {
+                item.setLinks(links);
+                notifyListeners(item);
+                break;
+            }
+        }
+    }
+
     void addOnHistoryModelChangedListener(OnHistoryModelChangedListener listener) {
         if(!listeners.contains(listener)) {
             listeners.add(listener);
@@ -89,6 +111,12 @@ public class HistoryModel {
     private void notifyListeners() {
         for (OnHistoryModelChangedListener listener : listeners) {
             listener.onHistoryModelChanged();
+        }
+    }
+
+    private void notifyListeners(UploadItem item) {
+        for (OnHistoryModelChangedListener listener : listeners) {
+            listener.onUploadItemChanged(item);
         }
     }
 

@@ -28,6 +28,7 @@ import org.jeromegout.simplycloud.share.ShareActivity;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchiveCreationListener,
 		HostServices.OnListener {
@@ -63,8 +64,13 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
             if (title != null && title.length() > 0) {
                 titleEdit.setText(title);
             }
-            makeArchive(filesUri);
-            initFab();
+			sendFab = findViewById(R.id.sendButton);
+			sendFab.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					sendArchive();
+				}
+			});
         }
     }
 
@@ -75,17 +81,6 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
         }
         return size;
     }
-
-	private void initFab() {
-		sendFab = findViewById(R.id.sendButton);
-		setEnableFab(sendFab, false);
-		sendFab.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				sendArchive();
-			}
-		});
-	}
 
 	@Override
 	public void onBackPressed() {
@@ -104,7 +99,7 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
 		return R.layout.activity_send;
 	}
 
-	private void makeArchive(List<Uri> filesUri) {
+	private void makeArchive() {
 		new ArchiveMaker()
 				.files(filesUri)
 				.into(getArchiveFile())
@@ -113,9 +108,18 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
 	}
 
     private void sendArchive() {
+		if(zipFile == null || !zipFile.exists())  {
+			//- file not yet created
+			makeArchive();
+		}
 		if(zipFile != null)  {
-			setEnableFab(sendFab, false);
-			currentHost.uploadArchive(this, zipFile, this);
+//			setEnableFab(sendFab, false);
+			//- create the unique id associated to this upload session
+			String uploadId = UUID.randomUUID().toString();
+			//- create the history entry even if the file is still not uploaded
+			UploadItem uploadItem = new UploadItem(filesUri, zipFile.length(), titleEdit.getText().toString(), uploadId);
+			HistoryModel.instance.addHistory(uploadItem);
+			currentHost.uploadArchive(this, zipFile, uploadId);
 		}
 	}
 
@@ -139,6 +143,7 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
 			setEnableFab(sendFab, true);
 			zipFile = archive;
 			statusView.setText("Packaging files done");
+			sendArchive();
 		}
 	}
 
@@ -148,7 +153,7 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
 	}
 
 	@Override
-	public void onUploadFinished(UploadInfo info) {
+	public void onUploadFinished(UploadLinks info) {
 		if(info != null) {
 		    statusView.setText("Upload fully completed");
             UploadItem uploadItem = new UploadItem(filesUri, zipFile.length(), info, titleEdit.getText().toString());
@@ -167,7 +172,6 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
 
 	@Override
 	public void onArchiveDeleted(boolean deletePerformed) {/* nop*/}
-
 
 	private File getArchiveFile() {
 		File outputDir = getCacheDir();

@@ -75,7 +75,9 @@ public class ArchiveMaker extends AsyncTask<Void, String, File> {
 
 	@Override
 	protected void onPostExecute(File file) {
-		listener.onArchiveCreated(file);
+		if(listener != null) {
+			listener.onArchiveCreated(file);
+		}
 	}
 
     //- to be notified when archive is created

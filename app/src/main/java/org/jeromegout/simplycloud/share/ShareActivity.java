@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,16 +12,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.jeromegout.simplycloud.R;
 import org.jeromegout.simplycloud.activities.BaseActivity;
 import org.jeromegout.simplycloud.history.HistoryActivity;
 import org.jeromegout.simplycloud.history.HistoryModel;
 import org.jeromegout.simplycloud.history.UploadItem;
+import org.jeromegout.simplycloud.hosts.HostManager;
 import org.jeromegout.simplycloud.hosts.HostServices;
-import org.jeromegout.simplycloud.hosts.free.FreeHost;
 import org.jeromegout.simplycloud.send.FileSendAdapter;
-import org.jeromegout.simplycloud.send.UploadInfo;
+import org.jeromegout.simplycloud.send.UploadLinks;
 
 
 public class ShareActivity extends BaseActivity implements HostServices.OnListener {
@@ -34,18 +34,18 @@ public class ShareActivity extends BaseActivity implements HostServices.OnListen
         super.onCreate(savedInstanceState);
         if(getIntent().getExtras() != null) {
             item = getIntent().getExtras().getParcelable("uploadItem");
-            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+            RecyclerView recyclerView = findViewById(R.id.recyclerView);
             FileSendAdapter fileAdapter = new FileSendAdapter(item.getContent(), this);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
             recyclerView.setAdapter(fileAdapter);
-            TextView titleView = (TextView) findViewById(R.id.uploadTitle);
+            TextView titleView = findViewById(R.id.uploadTitle);
             titleView.setText(item.getHumanReadableTitle());
-            TextView dateView = (TextView) findViewById(R.id.uploadDate);
+            TextView dateView = findViewById(R.id.uploadDate);
             dateView.setText(item.getHumanReadableDateTime());
-            TextView sizeView = (TextView) findViewById(R.id.uploadSize);
+            TextView sizeView = findViewById(R.id.uploadSize);
             sizeView.setText(item.getHumanReadableSize());
-            FloatingActionButton shareFab = (FloatingActionButton) findViewById(R.id.shareButton);
+            FloatingActionButton shareFab = findViewById(R.id.shareButton);
             shareFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -63,7 +63,7 @@ public class ShareActivity extends BaseActivity implements HostServices.OnListen
     private void share() {
         if(item != null) {
             String shareBody = "Here is the link to download the files I want to share with you\n\n";
-            shareBody += item.getInfo().downloadLink;
+            shareBody += item.getLinks().downloadLink;
             shareBody += "\n\n(sent with" + getResources().getString(R.string.app_name) + ")";
             Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
             sharingIntent.setType("text/plain");
@@ -112,23 +112,22 @@ public class ShareActivity extends BaseActivity implements HostServices.OnListen
 
     private void _deleteUploadItem() {
         //- send the delete
-        FreeHost free = new FreeHost();
-        free.deleteArchive(this, item.getInfo().deleteLink, this);
+        HostServices host = HostManager.instance.getHostById(item.getLinks().hostId);
+        host.deleteArchive(this, item.getLinks().deleteLink, this);
     }
 
     @Override
     public void onUploadUpdate(String update) {}
 
     @Override
-    public void onUploadFinished(UploadInfo info) {}
+    public void onUploadFinished(UploadLinks info) {}
 
     @Override
     public void onArchiveDeleted(boolean deletePerformed) {
         if(deletePerformed) {
             //- successfully deleted on server, delete in model too
             HistoryModel.instance.removeHistory(item);
-            TextView titleView = (TextView) findViewById(R.id.uploadTitle);
-            Snackbar.make(titleView, "'"+item.getHumanReadableTitle()+ "' successfully removed on server and history", Snackbar.LENGTH_SHORT);
+            Toast.makeText(this, "'"+item.getHumanReadableTitle()+ "' successfully removed on server and history", Toast.LENGTH_LONG).show();
             finish();
         }
     }

@@ -5,7 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import org.jeromegout.simplycloud.selection.fragments.FileUtil;
-import org.jeromegout.simplycloud.send.UploadInfo;
+import org.jeromegout.simplycloud.send.UploadLinks;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -13,34 +13,42 @@ import java.util.List;
 
 public class UploadItem implements Parcelable {
 
-    private String title;
     private List<String> content;
     private long size;
-    private UploadInfo info;
+    private UploadLinks links;
+    private String title;
+    private String uploadId;
 
-	public UploadItem(List<Uri> uris, long size, UploadInfo info, String title) {
+    public UploadItem(List<Uri> uris, long size, String title, String uploadId) {
+        this(uris, size, null, title, uploadId);
+    }
+
+	public UploadItem(List<Uri> uris, long size, UploadLinks links, String title, String uploadId) {
 	    this.content = new ArrayList<>(uris.size());
         for (Uri uri: uris) {
             this.content.add(uri.getPath());
         }
-        this.info = info;
+        this.links = links;
 	    this.size = size;
 	    this.title = title;
+	    this.uploadId = uploadId;
     }
 
     protected UploadItem(Parcel in) {
         content = in.createStringArrayList();
         size = in.readLong();
-        info = in.readParcelable(UploadInfo.class.getClassLoader());
+        links = in.readParcelable(UploadLinks.class.getClassLoader());
         title = in.readString();
+        uploadId = in.readString();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeStringList(content);
         dest.writeLong(size);
-        dest.writeParcelable(info, flags);
+        dest.writeParcelable(links, flags);
         dest.writeString(title);
+        dest.writeString(uploadId);
     }
 
     @Override
@@ -68,8 +76,12 @@ public class UploadItem implements Parcelable {
         return res;
     }
 
-    public UploadInfo getInfo() {
-        return info;
+    public void setLinks(UploadLinks links) {
+        this.links = links;
+    }
+
+    public UploadLinks getLinks() {
+        return links;
     }
 
     public long getSize() {
@@ -81,15 +93,15 @@ public class UploadItem implements Parcelable {
     }
 
     public String getHumanReadableDate() {
-        return DateFormat.getDateInstance().format(info.uploadDate.getTime());
+        return DateFormat.getDateInstance().format(links.uploadDate.getTime());
     }
 
     public String getHumanReadableDateTime() {
-        return DateFormat.getDateTimeInstance().format(info.uploadDate.getTime());
+        return DateFormat.getDateTimeInstance().format(links.uploadDate.getTime());
     }
 
     public String getHumanReadableTime() {
-        return DateFormat.getTimeInstance().format(info.uploadDate.getTime());
+        return DateFormat.getTimeInstance().format(links.uploadDate.getTime());
     }
 
     public String getHumanReadableTitle() {
@@ -100,11 +112,15 @@ public class UploadItem implements Parcelable {
         return title;
     }
 
+    public String getUploadId() {
+        return uploadId;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if(obj instanceof UploadItem){
             UploadItem other = (UploadItem) obj;
-            return info.uploadDate.getTimeInMillis() == other.getInfo().uploadDate.getTimeInMillis();
+            return uploadId.equals(other.uploadId);
         }
         return super.equals(obj);
     }

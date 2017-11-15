@@ -2,7 +2,7 @@ package org.jeromegout.simplycloud.hosts;
 
 import android.content.Context;
 
-import org.jeromegout.simplycloud.send.UploadInfo;
+import org.jeromegout.simplycloud.send.UploadLinks;
 
 import java.io.File;
 
@@ -18,7 +18,7 @@ public interface HostServices {
 
     void archiveStillAlive(Context context, String archiveURL, OnListener listener);
 
-    void uploadArchive(Context context, File archive, HostServices.OnListener listener);
+    void uploadArchive(Context context, File archive, String uploadId);
 
     void deleteArchive(Context context, String deleteURL, HostServices.OnListener listener);
 
@@ -29,7 +29,7 @@ public interface HostServices {
         void onUploadUpdate(String update);
 
         //- end upload notification
-        void onUploadFinished(UploadInfo info);
+        void onUploadFinished(UploadLinks info);
 
         //- delete notification
         void onArchiveDeleted(boolean deletePerformed);

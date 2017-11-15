@@ -12,11 +12,15 @@ import com.android.volley.toolbox.Volley;
 
 import net.gotev.uploadservice.ServerResponse;
 import net.gotev.uploadservice.UploadInfo;
+import net.gotev.uploadservice.UploadNotificationConfig;
 
 import org.jeromegout.simplycloud.Logging;
 import org.jeromegout.simplycloud.R;
+import org.jeromegout.simplycloud.history.HistoryModel;
 import org.jeromegout.simplycloud.hosts.HostServices;
+import org.jeromegout.simplycloud.hosts.MultipartUploader;
 import org.jeromegout.simplycloud.hosts.Uploader;
+import org.jeromegout.simplycloud.send.UploadLinks;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,8 +30,6 @@ public class FreeHost extends Uploader implements HostServices {
 
     public static final String HOST_ID = "dl.free.fr";
     private final static String FREE_URL = "http://dl.free.fr/upload.pl?b15059952545362975907183455737546";//$NON-NLS-1$
-
-    private OnListener completedListener;
 
     @Override
     public String getHostId() {
@@ -60,25 +62,28 @@ public class FreeHost extends Uploader implements HostServices {
     }
 
     @Override
-    public void uploadArchive(Context context, File archive, @NonNull final OnListener listener) {
-        upload(context, archive, FREE_URL);
-        completedListener = listener;
+    public void uploadArchive(Context context, File archive, String uploadId) {
+        startUpload(uploadId);
+        try {
+            new MultipartUploader(context, uploadId, FREE_URL)
+                    .addFileToUpload(archive.getPath(), "ufile", archive.getName())
+                    .setNotificationConfig(new UploadNotificationConfig())
+                    .setMaxRetries(2)
+                    .startUpload();
+        } catch (Exception e) {
+            Logging.e(e.getMessage(), e);
+        }
     }
 
     @Override
     public void onUploadCompleted(Context context, UploadInfo info, ServerResponse response) {
-        super.onUploadCompleted(context, info, response);
-        //- post process to retrieve the upload info links
-        if(completedListener != null){
-            completedListener.onUploadUpdate("Archive uploaded on Free server, getting links");
-        }
+        super.onUploadCompleted(context, info, response); //- this calls super.finishUpload
         //- retrieving the monitoring url from the response
-        uploadURL =  response.getHeaders().get("Location");
-        Logging.d(uploadURL);
-        org.jeromegout.simplycloud.send.UploadInfo links = getUploadInfos(context, uploadURL);
-        if(completedListener != null) {
-            completedListener.onUploadFinished(links);
-        }
+        String monURL = response.getHeaders().get("Location");
+        Logging.d(monURL);
+        //- retrieve links from the monitoring page
+        UploadLinks links = getUploadInfos(context, monURL);
+        HistoryModel.instance.setLinks(info.getUploadId(), links);
     }
 
     @Override
@@ -122,8 +127,8 @@ public class FreeHost extends Uploader implements HostServices {
      * @return upload information (download and delete links)
      * @throws IOException if an I/O exception occurs or if response code is not OK
      */
-    private org.jeromegout.simplycloud.send.UploadInfo getUploadInfos(final Context context, final String monURL) {
-        final org.jeromegout.simplycloud.send.UploadInfo[] info = new org.jeromegout.simplycloud.send.UploadInfo[1];
+    private UploadLinks getUploadInfos(final Context context, final String monURL) {
+        final UploadLinks[] info = new UploadLinks[1];
         final RequestQueue queue = Volley.newRequestQueue(context);
 
         final StringRequest linksRequest = new StringRequest(Request.Method.GET, monURL, new Response.Listener<String>() {
@@ -155,8 +160,8 @@ public class FreeHost extends Uploader implements HostServices {
         return line.trim().replaceAll(" ", "").contains("functiondoLoad(){setTimeout(\"refresh()\",2*1000);}");
     }
 
-    private org.jeromegout.simplycloud.send.UploadInfo findLinks(String sb) {
-        org.jeromegout.simplycloud.send.UploadInfo info = new org.jeromegout.simplycloud.send.UploadInfo(null, null, HOST_ID);
+    private UploadLinks findLinks(String sb) {
+        UploadLinks info = new UploadLinks(null, null, HOST_ID);
         int i = sb.indexOf("<a class=\"underline\" href=\"http://dl.free.fr/");
         if(i != -1) {
             int j = sb.indexOf("\" onclick=\"window.open('http://dl.free.fr/", i);
@@ -167,7 +172,7 @@ public class FreeHost extends Uploader implements HostServices {
                     j = sb.indexOf("\" onclick=\"window.open('http://dl.free.fr/rm.pl?h=", i);
                     if(j != -1) {
                         String deleteURL = sb.substring(i+"<a class=\"underline\" href=\"".length(), j);
-                        info =  new org.jeromegout.simplycloud.send.UploadInfo(downloadURL, deleteURL+"&f=1", HOST_ID);
+                        info =  new UploadLinks(downloadURL, deleteURL+"&f=1", HOST_ID);
                     } else {
                         info.setError("End marker for delete link not found");
                     }

@@ -4,42 +4,37 @@ import android.content.Context;
 
 import net.gotev.uploadservice.ServerResponse;
 import net.gotev.uploadservice.UploadInfo;
-import net.gotev.uploadservice.UploadNotificationConfig;
 
-import org.jeromegout.simplycloud.Logging;
-
-import java.io.File;
-import java.util.UUID;
-
+/**
+ * Base class for all uploader. Main method is upload
+ */
 public class Uploader {
 
-    protected String uploadURL;
-
-    public void upload(Context context, File file, String url) {
-        try {
-            String uploadId = UUID.randomUUID().toString();
-            MultipartUploader poster = (MultipartUploader) new MultipartUploader(context, uploadId, url)
-                    .addFileToUpload(file.getPath(), "ufile", file.getName())
-                    .setNotificationConfig(new UploadNotificationConfig())
-                    .setMaxRetries(2);
-            poster.startUpload();
-            uploadURL = poster.getURL();
-
-            UploadSessionManager.instance.registerUploadSession(uploadId, this);
-        } catch (Exception e) {
-            Logging.e(e.getMessage(), e);
-        }
+    /**
+     * Subclass (specific uploader) should call this method before start the upload session
+     *
+     * @param uploadId
+     */
+    protected void startUpload(String uploadId) {
+        UploadSessionManager.instance.registerUploadSession(uploadId, this);
     }
 
     /**
-     * Subclass (specific uploader) can override this method to do some post process after upload is completed
+     * Subclass (specific uploader) should call this method when upload is finished
+     */
+    protected void finishUpload(String uploadId) {
+        //- no more need to listener global receiver, the session is over
+        UploadSessionManager.instance.unregisterUploadSession(uploadId);
+    }
+
+    /**
+     * Method may be overridden by subclass in order to complete the upload session
      * @param context
      * @param info
      * @param response
      */
-    public void onUploadCompleted(Context context, UploadInfo info, ServerResponse response) {
-        //- no more need to listener global receiver, the session is over
-        UploadSessionManager.instance.unregisterUploadSession(info.getUploadId());
+    protected void onUploadCompleted(Context context, UploadInfo info, ServerResponse response) {
+        finishUpload(info.getUploadId());
     }
 
 }

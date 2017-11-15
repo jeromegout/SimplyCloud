@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import java.util.Calendar;
 
-public class UploadInfo implements Parcelable {
+public class UploadLinks implements Parcelable {
 
 	public String downloadLink;
 	public String deleteLink;
@@ -22,7 +22,7 @@ public class UploadInfo implements Parcelable {
 		this.fullPage = fullPage;
 	}
 
-	public UploadInfo(String downloadLink, String deleteLink, String host) {
+	public UploadLinks(String downloadLink, String deleteLink, String host) {
 		this.firstError = null;
 		this.hostId = host;
 		if(downloadLink != null) {
@@ -56,7 +56,7 @@ public class UploadInfo implements Parcelable {
 		this.firstError = error;
 	}
 
-    protected UploadInfo(Parcel in) {
+    protected UploadLinks(Parcel in) {
         downloadLink = in.readString();
         deleteLink = in.readString();
         fullPage = in.readString();
@@ -81,15 +81,15 @@ public class UploadInfo implements Parcelable {
         return 0;
     }
 
-    public static final Creator<UploadInfo> CREATOR = new Creator<UploadInfo>() {
+    public static final Creator<UploadLinks> CREATOR = new Creator<UploadLinks>() {
         @Override
-        public UploadInfo createFromParcel(Parcel in) {
-            return new UploadInfo(in);
+        public UploadLinks createFromParcel(Parcel in) {
+            return new UploadLinks(in);
         }
 
         @Override
-        public UploadInfo[] newArray(int size) {
-            return new UploadInfo[size];
+        public UploadLinks[] newArray(int size) {
+            return new UploadLinks[size];
         }
     };
 }

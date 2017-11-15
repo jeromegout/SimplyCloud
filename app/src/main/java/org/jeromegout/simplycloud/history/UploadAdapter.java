@@ -19,7 +19,7 @@ import org.jeromegout.simplycloud.R;
 import org.jeromegout.simplycloud.hosts.HostServices;
 import org.jeromegout.simplycloud.hosts.free.FreeHost;
 import org.jeromegout.simplycloud.send.UploadActivity;
-import org.jeromegout.simplycloud.send.UploadInfo;
+import org.jeromegout.simplycloud.send.UploadLinks;
 import org.jeromegout.simplycloud.share.ShareActivity;
 
 import java.util.ArrayList;
@@ -41,15 +41,15 @@ public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> i
 
         Holder(View itemView) {
             super(itemView);
-            dateIcon = (ImageView) itemView.findViewById(R.id.dateImage);
-            uploadTitle = (TextView) itemView.findViewById(R.id.uploadTitle);
-            uploadDetails = (TextView) itemView.findViewById(R.id.uploadDetails);
-            uploadDate = (TextView) itemView.findViewById(R.id.uploadDate);
-            uploadSize = (TextView) itemView.findViewById(R.id.uploadSize);
+            dateIcon = itemView.findViewById(R.id.dateImage);
+            uploadTitle = itemView.findViewById(R.id.uploadTitle);
+            uploadDetails = itemView.findViewById(R.id.uploadDetails);
+            uploadDate = itemView.findViewById(R.id.uploadDate);
+            uploadSize = itemView.findViewById(R.id.uploadSize);
         }
 
         void bind(final UploadItem item) {
-            dateIcon.setImageDrawable(createIcon(item.getInfo().uploadDate));
+            dateIcon.setImageDrawable(createIcon(item.getLinks().uploadDate));
             uploadTitle.setText(item.getHumanReadableTitle());
             uploadDetails.setText(String.format("%d files", item.getContent().size()));
             uploadDate.setText(item.getHumanReadableDateTime());
@@ -70,6 +70,11 @@ public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> i
     @Override
     public void onHistoryModelChanged() {
         notifyDataSetChanged();
+    }
+
+    @Override
+    public void onUploadItemChanged(UploadItem item) {
+        notifyItemChanged(HistoryModel.instance.getItemPosition(item));
     }
 
     @Override
@@ -108,7 +113,7 @@ public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> i
 
     private void openUploadHistory(final UploadItem item) {
         FreeHost free = new FreeHost();
-        free.archiveStillAlive(context, item.getInfo().downloadLink, new HostServices.OnListener() {
+        free.archiveStillAlive(context, item.getLinks().downloadLink, new HostServices.OnListener() {
             @Override
             public void onUploadUpdate(String update) {
                 if(HostServices.OK.equals(update)) {
@@ -119,7 +124,7 @@ public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> i
                 }
             }
             @Override
-            public void onUploadFinished(UploadInfo info) {}
+            public void onUploadFinished(UploadLinks info) {}
             @Override
             public void onArchiveDeleted(boolean deletePerformed) {}
         });

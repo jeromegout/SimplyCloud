@@ -3,7 +3,7 @@ package org.jeromegout.simplycloud.hosts.free;
 import android.os.AsyncTask;
 import android.widget.TextView;
 
-import org.jeromegout.simplycloud.send.UploadInfo;
+import org.jeromegout.simplycloud.send.UploadLinks;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,7 +15,7 @@ import java.net.URL;
 import java.util.Calendar;
 
 @Deprecated
-public class FreeTransfer extends AsyncTask<Void, String, UploadInfo> implements MultiPartPoster.OnProgressListener {
+public class FreeTransfer extends AsyncTask<Void, String, UploadLinks> implements MultiPartPoster.OnProgressListener {
 
 	public static final String FREE_HOST_ID = "dl.free.fr";
 	private final OnArchiveSentListener listener;
@@ -32,7 +32,7 @@ public class FreeTransfer extends AsyncTask<Void, String, UploadInfo> implements
 	private final static String LF = System.getProperty("line.separator");//$NON-NLS-1$
 
 	@Override
-	protected UploadInfo doInBackground(Void... params) {
+	protected UploadLinks doInBackground(Void... params) {
 		try {
 			MultiPartPoster poster = new MultiPartPoster(FREE_URL, this);
 			poster.addFilePart(archive);
@@ -50,7 +50,7 @@ public class FreeTransfer extends AsyncTask<Void, String, UploadInfo> implements
 	}
 
 	@Override
-	protected void onPostExecute(UploadInfo infos) {
+	protected void onPostExecute(UploadLinks infos) {
 		if(listener != null) {
 			listener.onArchiveSent(infos);
 		}
@@ -65,9 +65,9 @@ public class FreeTransfer extends AsyncTask<Void, String, UploadInfo> implements
 	 * @return upload information (download and delete links)
 	 * @throws IOException if an I/O exception occurs or if response code is not OK
 	 */
-	private UploadInfo getUploadInfos(String monURL, String progress) throws IOException {
+	private UploadLinks getUploadInfos(String monURL, String progress) throws IOException {
 //		System.out.println("Get Infos: GET:"+monURL);
-		UploadInfo infos;
+		UploadLinks infos;
 
 		publishProgress("Retrieving link from host server "+progress);
 		URL mon = new URL(monURL);
@@ -113,8 +113,8 @@ public class FreeTransfer extends AsyncTask<Void, String, UploadInfo> implements
 		return line.trim().replaceAll(" ", "").contains("functiondoLoad(){setTimeout(\"refresh()\",2*1000);}");
 	}
 
-	private UploadInfo findLinks(StringBuilder sb) {
-		UploadInfo info = new UploadInfo(null, null, FREE_HOST_ID);
+	private UploadLinks findLinks(StringBuilder sb) {
+		UploadLinks info = new UploadLinks(null, null, FREE_HOST_ID);
 		int i = sb.indexOf("<a class=\"underline\" href=\"http://dl.free.fr/");
 		if(i != -1) {
 			int j = sb.indexOf("\" onclick=\"window.open('http://dl.free.fr/", i);
@@ -125,7 +125,7 @@ public class FreeTransfer extends AsyncTask<Void, String, UploadInfo> implements
 					j = sb.indexOf("\" onclick=\"window.open('http://dl.free.fr/rm.pl?h=", i);
 					if(j != -1) {
 						String deleteURL = sb.substring(i+"<a class=\"underline\" href=\"".length(), j);
-						info =  new UploadInfo(downloadURL, deleteURL+"&f=1", FREE_HOST_ID);
+						info =  new UploadLinks(downloadURL, deleteURL+"&f=1", FREE_HOST_ID);
 					} else {
 						info.setError("End marker for delete link not found");
 					}
@@ -170,6 +170,6 @@ public class FreeTransfer extends AsyncTask<Void, String, UploadInfo> implements
 
 	//- to be notified when archive is sent to dl.free.fr server
     public interface OnArchiveSentListener {
-		void onArchiveSent(UploadInfo info);
+		void onArchiveSent(UploadLinks info);
 	}
 }
