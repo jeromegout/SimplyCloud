@@ -10,16 +10,15 @@ import org.jeromegout.simplycloud.send.UploadLinks;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class UploadItem implements Parcelable {
 
+    private String uploadId;
     private List<String> content;
     private long size;
     private UploadLinks links;
     private String title;
-    private String uploadId;
     private Calendar startUploadDate;
 
     public UploadItem(List<Uri> uris, long size, String title, String uploadId) {

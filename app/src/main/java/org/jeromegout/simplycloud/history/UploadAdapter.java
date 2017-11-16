@@ -1,12 +1,10 @@
 package org.jeromegout.simplycloud.history;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -98,7 +96,7 @@ public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> i
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-        UploadItem item = HistoryModel.instance.getUpload(position);
+        UploadItem item = HistoryModel.instance.getUploadItem(position);
         holder.bind(item);
     }
 
@@ -140,8 +138,7 @@ public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> i
     }
 
     private void openSendItem(UploadItem item) {
-        View rootView = ((Activity)context).getWindow().getDecorView().findViewById(android.R.id.content);
-        Snackbar.make(rootView, "Upload is deprecated, need to send it again", Snackbar.LENGTH_SHORT).show();
+        Toast.makeText(context, "Upload is deprecated, need to send it again", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(context, UploadActivity.class);
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList("selection", (ArrayList<? extends Parcelable>) item.getContent());
@@ -155,9 +152,7 @@ public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> i
 
     private void openShareItem(UploadItem item) {
         Intent intent = new Intent(context, ShareActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("uploadItem", item);
-        intent.putExtras(bundle);
+        intent.putExtra("item", item.getUploadId());
         context.startActivity(intent);
     }
 }

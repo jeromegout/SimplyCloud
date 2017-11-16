@@ -2,6 +2,7 @@ package org.jeromegout.simplycloud.hosts.free;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -18,6 +19,7 @@ import net.gotev.uploadservice.UploadNotificationConfig;
 import org.jeromegout.simplycloud.Logging;
 import org.jeromegout.simplycloud.R;
 import org.jeromegout.simplycloud.history.HistoryModel;
+import org.jeromegout.simplycloud.history.UploadItem;
 import org.jeromegout.simplycloud.hosts.HostServices;
 import org.jeromegout.simplycloud.hosts.Uploader;
 import org.jeromegout.simplycloud.send.UploadLinks;
@@ -142,6 +144,10 @@ public class FreeHost extends Uploader implements HostServices {
                     getUploadInfos(context, monURL, uploadId);
                 } else {
                     Logging.d("FINISHED !!!!!!");
+                    UploadItem item = HistoryModel.instance.getUploadItem(uploadId);
+                    if(item !=null) {
+                        Toast.makeText(context, item.getTitle()+ " successfully uploaded on "+getHostId(), Toast.LENGTH_LONG).show();
+                    }
                     //TODO update the item status : finished in the model
                     //- we reached the end of the page without finding the refresh marker
                     //- we can return the collected info

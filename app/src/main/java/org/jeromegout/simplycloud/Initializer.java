@@ -5,6 +5,7 @@ import android.app.Application;
 import net.gotev.uploadservice.UploadService;
 import net.gotev.uploadservice.okhttp.OkHttpStack;
 
+import org.jeromegout.simplycloud.history.HistoryModel;
 import org.jeromegout.simplycloud.hosts.HostManager;
 import org.jeromegout.simplycloud.hosts.free.FreeHost;
 
@@ -32,5 +33,12 @@ public class Initializer extends Application {
 
         //- by default dl.free.fr is used
         HostManager.instance.setCurrentId(FreeHost.HOST_ID);
+
+        //- hostManager
+        HostManager.instance.init();
+
+        //- Model
+        HistoryModel.instance.setContext(this);
+        HistoryModel.instance.restoreHistories();
     }
 }

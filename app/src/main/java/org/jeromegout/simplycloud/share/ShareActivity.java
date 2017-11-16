@@ -32,27 +32,27 @@ public class ShareActivity extends BaseActivity implements HostServices.OnListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getIntent().getExtras() != null) {
-            item = getIntent().getExtras().getParcelable("uploadItem");
-            RecyclerView recyclerView = findViewById(R.id.recyclerView);
-            FileSendAdapter fileAdapter = new FileSendAdapter(item.getContent(), this);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-            recyclerView.setAdapter(fileAdapter);
-            TextView titleView = findViewById(R.id.uploadTitle);
-            titleView.setText(item.getHumanReadableTitle());
-            TextView dateView = findViewById(R.id.uploadDate);
-            dateView.setText(item.getHumanReadableDateTime());
-            TextView sizeView = findViewById(R.id.uploadSize);
-            sizeView.setText(item.getHumanReadableSize());
-            FloatingActionButton shareFab = findViewById(R.id.shareButton);
-            shareFab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    share();
-                }
-            });
-        }
+        String uploadId = getIntent().getStringExtra("item");
+        item = HistoryModel.instance.getUploadItem(uploadId);
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        FileSendAdapter fileAdapter = new FileSendAdapter(item.getContent(), this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        recyclerView.setAdapter(fileAdapter);
+        TextView titleView = findViewById(R.id.uploadTitle);
+        titleView.setText(item.getHumanReadableTitle());
+        TextView dateView = findViewById(R.id.uploadDate);
+        dateView.setText(item.getHumanReadableDateTime());
+        TextView sizeView = findViewById(R.id.uploadSize);
+        sizeView.setText(item.getHumanReadableSize());
+        FloatingActionButton shareFab = findViewById(R.id.shareButton);
+        shareFab.setVisibility(item.getLinks() != null ? View.VISIBLE : View.GONE);
+        shareFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                share();
+            }
+        });
     }
 
     @Override
@@ -77,7 +77,8 @@ public class ShareActivity extends BaseActivity implements HostServices.OnListen
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_share, menu);
-        menu.findItem(R.id.delete_upload);
+        MenuItem deleteMenu = menu.findItem(R.id.delete_upload);
+        deleteMenu.setEnabled(item.getLinks() != null);
         menu.findItem(R.id.close_share_activity);
         return super.onCreateOptionsMenu(menu);
     }

@@ -1,6 +1,7 @@
 package org.jeromegout.simplycloud.history;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -38,7 +39,6 @@ public class HistoryModel {
          */
         void onHistoryModelChanged();
 
-
         /**
          * Item update
          */
@@ -49,6 +49,7 @@ public class HistoryModel {
         histories = new ArrayList<>();
         listeners = new ArrayList<>();
     }
+
     public void addHistory(UploadItem item) {
         if(! histories.contains(item)) {
             histories.add(item);
@@ -81,9 +82,18 @@ public class HistoryModel {
         return histories;
     }
 
-    UploadItem getUpload(int position) {
+    UploadItem getUploadItem(int position) {
         if(position >= 0 && position < histories.size()) {
             return histories.get(position);
+        }
+        return null;
+    }
+
+    public UploadItem getUploadItem(String uploadId) {
+        for (UploadItem item : histories) {
+            if (item.getUploadId().equals(uploadId)) {
+                return item;
+            }
         }
         return null;
     }
@@ -93,6 +103,7 @@ public class HistoryModel {
             if(item.getUploadId().equals(uploadId)) {
                 item.setLinks(links);
                 notifyListeners(item);
+                saveModel();
                 break;
             }
         }
@@ -121,22 +132,19 @@ public class HistoryModel {
     }
 
     private void saveModel() {
-        if(context != null) {
-            try {
-                Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-                try (OutputStreamWriter writer = new OutputStreamWriter(context.openFileOutput("historyDB", MODE_PRIVATE))) {
-                    String s = gson.toJson(histories);
-                    writer.write(s.replace("\\\\", "\\"));
-                }
-            } catch (IOException e) {
-                Log.e("ERROR", e.getMessage(), e);
-            }
-        }
+        try {
+			Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+			try (OutputStreamWriter writer = new OutputStreamWriter(context.openFileOutput("historyDB", MODE_PRIVATE))) {
+				String s = gson.toJson(histories);
+				writer.write(s.replace("\\\\", "\\"));
+			}
+		} catch (IOException e) {
+			Log.e("ERROR", e.getMessage(), e);
+		}
     }
 
-    void restoreHistories(Context context) {
+    public void restoreHistories() {
         try {
-            this.context = context;
             FileInputStream fi = context.openFileInput("historyDB");
             List<UploadItem> uploadItems = readJsonStream(fi);
             setHistories(uploadItems, false);
@@ -153,5 +161,9 @@ public class HistoryModel {
         try (JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"))) {
             return gson.fromJson(reader, collectionType);
         }
+    }
+
+    public void setContext(@NonNull Context context) {
+        this.context = context;
     }
 }

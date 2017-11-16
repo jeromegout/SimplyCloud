@@ -16,7 +16,6 @@ public class HostManager {
 
 	private HostManager() {
 		hosts = new HashMap<>();
-		init();
 	}
 
 	public void registerHost(HostServices host) {
