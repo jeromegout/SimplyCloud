@@ -124,7 +124,7 @@ public class FreeHost extends Uploader implements HostServices {
      * Given a monitoring url page, it returns the link of the uploaded file and the URL to delete it from server
      *
      * @param monURL monitoring URL (the URL that will contain download and delete links when finish)
-     * @param uploadId
+     * @param uploadId the unique id used for the upload session (created by UploadActivity.sendArchive())
      * @return upload information (download and delete links)
      */
     private void getUploadInfos(final Context context, final String monURL, final String uploadId) {
@@ -143,16 +143,20 @@ public class FreeHost extends Uploader implements HostServices {
                     // TODO update the item status (progress monitor) according to its uploadId
                     getUploadInfos(context, monURL, uploadId);
                 } else {
-                    Logging.d("FINISHED !!!!!!");
-                    UploadItem item = HistoryModel.instance.getUploadItem(uploadId);
-                    if(item !=null) {
-                        Toast.makeText(context, item.getTitle()+ " successfully uploaded on "+getHostId(), Toast.LENGTH_LONG).show();
-                    }
                     //TODO update the item status : finished in the model
                     //- we reached the end of the page without finding the refresh marker
                     //- we can return the collected info
                     UploadLinks links = findLinks(response);
                     HistoryModel.instance.setLinks(uploadId, links);
+                    UploadItem item = HistoryModel.instance.getUploadItem(uploadId);
+                    if(item !=null && links != null) {
+                        Toast.makeText(context, item.getTitle()+ " successfully uploaded on "+getHostId(), Toast.LENGTH_LONG).show();
+                        Logging.d("FINISHED !!!!!!");
+                        Logging.d("Download: "+links.downloadLink);
+                        Logging.d("Delete:   "+links.deleteLink);
+                    } else {
+                        Toast.makeText(context, "Problem uploading "+item.getTitle()+ " on "+getHostId(), Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         }, new Response.ErrorListener() {

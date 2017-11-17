@@ -15,8 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.jeromegout.simplycloud.R;
+import org.jeromegout.simplycloud.hosts.HostManager;
 import org.jeromegout.simplycloud.hosts.HostServices;
-import org.jeromegout.simplycloud.hosts.free.FreeHost;
 import org.jeromegout.simplycloud.send.UploadActivity;
 import org.jeromegout.simplycloud.send.UploadLinks;
 import org.jeromegout.simplycloud.share.ShareActivity;
@@ -111,11 +111,11 @@ public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> i
     }
 
     private void openUploadHistory(final UploadItem item) {
-        FreeHost free = new FreeHost();
         if(item.getLinks() == null) {
             Toast.makeText(context, "Upload not yet completed ... please wait", Toast.LENGTH_SHORT).show();
         } else {
-            free.archiveStillAlive(context, item.getLinks().downloadLink, new HostServices.OnListener() {
+            HostServices host = HostManager.instance.getHostById(item.getLinks().hostId);
+            host.archiveStillAlive(context, item.getLinks().downloadLink, new HostServices.OnListener() {
                 @Override
                 public void onUploadUpdate(String update) {
                     if (HostServices.OK.equals(update)) {

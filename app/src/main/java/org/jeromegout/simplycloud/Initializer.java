@@ -31,11 +31,11 @@ public class Initializer extends Application {
                 .build();
         UploadService.HTTP_STACK = new OkHttpStack(client);
 
-        //- by default dl.free.fr is used
-        HostManager.instance.setCurrentId(FreeHost.HOST_ID);
 
         //- hostManager
         HostManager.instance.init();
+        //- by default dl.free.fr is used
+        HostManager.instance.setCurrentId(FreeHost.HOST_ID);
 
         //- Model
         HistoryModel.instance.setContext(this);

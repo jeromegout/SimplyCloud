@@ -25,10 +25,17 @@
 			</intent-filter>
 		</activity>
 		<activity android:name=".send.UploadActivity">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
-			</intent-filter>
-		</activity>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.SEND"/>
+                <action android:name="android.intent.action.SEND_MULTIPLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="application/vnd.google.panorama360+jpg"/>
+                <data android:mimeType="image/*"/>
+                <data android:mimeType="video/*"/>
+            </intent-filter>
+
+        </activity>
         <activity android:name=".share.ShareActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
