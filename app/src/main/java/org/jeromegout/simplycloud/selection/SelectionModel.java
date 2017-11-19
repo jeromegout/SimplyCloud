@@ -14,8 +14,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-;
-
 public class SelectionModel {
 
     private final List<Uri> selection;
@@ -39,6 +37,7 @@ public class SelectionModel {
     public void setSelection(@NonNull List<Uri> sel) {
         if (!selection.equals(sel)) {
             selection.clear();
+            selectionSize = 0;
             for (Uri uri : sel) {
                 selection.add(uri);
                 selectionSize += FileUtil.getFileSize(uri);

@@ -3,7 +3,6 @@ package org.jeromegout.simplycloud.send;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DividerItemDecoration;
@@ -45,28 +44,8 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
 	protected void onCreate(@NonNull Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.currentHost = HostManager.instance.getCurrentHost();
-        String action = getIntent().getAction();
-        String type = getIntent().getType();
-        String title = null;
-        if ((Intent.ACTION_SEND.equals(action) ||
-                Intent.ACTION_SEND_MULTIPLE.equals(action)) && type != null) {
-            if (type.startsWith("image/") || type.startsWith("video/")) {
-                filesUri = new ArrayList<>();
-                ArrayList<Uri> list = getIntent().getExtras().getParcelableArrayList(Intent.EXTRA_STREAM);
-                for (Uri u: list) {
-                    try {
-                        filesUri.add(Uri.parse(FileUtil.getPath(this, u)));
-                    } catch (URISyntaxException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        } else {
-            if (getIntent().getExtras() != null) {
-                filesUri = getIntent().getExtras().getParcelableArrayList("selection");
-                title = getIntent().getStringExtra("title");
-            }
-        }
+        //- retrieve selection and title if possible
+        String title = getInput();
         ImageView logo = findViewById(R.id.logo);
         logo.setImageDrawable(getResources().getDrawable(currentHost.getHostLogoId()));
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
@@ -82,7 +61,7 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
             titleEdit.setText(title);
         }
         sendFab = findViewById(R.id.sendButton);
-            sendFab.setOnClickListener(new View.OnClickListener() {
+        sendFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     sendArchive();
@@ -90,7 +69,33 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
             });
     }
 
-	private long getSelectionSize() {
+    private String getInput() {
+        String action = getIntent().getAction();
+        String type = getIntent().getType();
+        String title = null;
+        if ((Intent.ACTION_SEND.equals(action) ||
+                Intent.ACTION_SEND_MULTIPLE.equals(action)) && type != null) {
+            if (type.startsWith("image/") || type.startsWith("video/") || type.startsWith("audio/")) {
+                filesUri = new ArrayList<>();
+                ArrayList<Uri> list = getIntent().getExtras().getParcelableArrayList(Intent.EXTRA_STREAM);
+                for (Uri u: list) {
+                    try {
+                        filesUri.add(Uri.parse(FileUtil.getPath(this, u)));
+                    } catch (URISyntaxException e) {
+                        Logging.e(e);
+                    }
+                }
+            }
+        } else {
+            if (getIntent().getExtras() != null) {
+                filesUri = getIntent().getExtras().getParcelableArrayList("selection");
+                title = getIntent().getStringExtra("title");
+            }
+        }
+        return title;
+    }
+
+    private long getSelectionSize() {
 	    long size = 0;
         for (Uri uri : filesUri) {
             size += FileUtil.getFileSize(uri);
@@ -129,7 +134,6 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
 			makeArchive();
 		}
 		if(zipFile != null)  {
-//			setEnableFab(sendFab, false);
 			//- create the unique id associated to this upload session
 			String uploadId = UUID.randomUUID().toString();
 			//- create the history entry even if the file is still not uploaded
@@ -163,32 +167,6 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
 			sendArchive();
 		}
 	}
-
-//	@Override
-//	public void onUploadUpdate(String update) {
-//        statusView.setText(update);
-//	}
-//
-//	@Override
-//	public void onUploadFinished(UploadLinks info) {
-//		if(info != null) {
-//		    statusView.setText("Upload fully completed");
-//            UploadItem uploadItem = new UploadItem(filesUri, zipFile.length(), info, titleEdit.getText().toString());
-//            HistoryModel.instance.addHistory(uploadItem);
-//            //- invoke share activity
-//            Intent intent = new Intent(this, ShareActivity.class);
-//            Bundle bundle = new Bundle();
-//            bundle.putParcelable("uploadItem", uploadItem);
-//            intent.putExtras(bundle);
-//            startActivity(intent);
-//
-//            Log.d("====== DEBUG DL  ===== ", info.downloadLink);
-//			Log.d("====== DEBUG DEL ===== ", info.deleteLink);
-//		}
-//	}
-//
-//	@Override
-//	public void onArchiveDeleted(boolean deletePerformed) {/* nop*/}
 
 	private File getArchiveFile() {
 		File outputDir = getCacheDir();

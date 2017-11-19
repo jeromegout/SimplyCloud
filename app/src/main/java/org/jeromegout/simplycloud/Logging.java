@@ -10,6 +10,10 @@ public final class Logging {
 		Log.e(LOG_TAG, message, e);
 	}
 
+	public static void e(Throwable e) {
+	    e(e.getMessage(), e);
+    }
+
 	public static void e(String message) {
 		Log.e(LOG_TAG, message);
 	}
