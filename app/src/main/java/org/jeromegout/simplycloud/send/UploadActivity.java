@@ -42,8 +42,9 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
 	private TextView statusView;
     private EditText titleEdit;
 	private HostServices currentHost;
+    private boolean backToSelection;
 
-	@Override
+    @Override
 	protected void onCreate(@NonNull Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.currentHost = HostManager.instance.getCurrentHost();
@@ -78,6 +79,7 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
         String title = null;
         if ((Intent.ACTION_SEND.equals(action) ||
                 Intent.ACTION_SEND_MULTIPLE.equals(action)) && type != null) {
+            backToSelection = true;
             if (type.startsWith("image/") || type.startsWith("video/") || type.startsWith("audio/")) {
                 filesUri = new ArrayList<>();
                 ArrayList<Uri> list = getIntent().getExtras().getParcelableArrayList(Intent.EXTRA_STREAM);
@@ -90,6 +92,7 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
                 }
             }
         } else {
+            backToSelection = false;
             if (getIntent().getExtras() != null) {
                 filesUri = getIntent().getExtras().getParcelableArrayList("selection");
                 title = getIntent().getStringExtra("title");
@@ -194,13 +197,19 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
-                //- force to open the selection activity
-                Intent intent = new Intent(this, SelectionActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList("selection", (ArrayList<? extends Parcelable>) filesUri);
-                intent.putExtras(bundle);
-                startActivity(intent);
-                finish();
+                if(backToSelection) {
+                    //- Upload activity has been launched from another app (gallery for instance)
+                    //- force to open the selection activity
+                    Intent intent = new Intent(this, SelectionActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelableArrayList("selection", (ArrayList<? extends Parcelable>) filesUri);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    //- normal behavior
+                    super.onOptionsItemSelected(item);
+                }
         }
         return true;
     }
