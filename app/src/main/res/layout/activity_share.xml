@@ -33,15 +33,19 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="Unnamed archive"
-            android:textAppearance="?android:textAppearanceLarge"/>
+            android:ellipsize="end"
+            android:textStyle="normal"
+            android:textSize="24sp"
+            android:textColor="@color/colorPrimaryText"
+            />
         <TextView
             android:id="@+id/uploadDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_below="@id/uploadTitle"
+            android:textSize="16sp"
             android:layout_marginTop="4dp"
-            android:textAppearance="?android:textAppearanceSmall"
             />
         <TextView
             android:id="@+id/uploadSize"
@@ -51,6 +55,7 @@
             android:layout_below="@id/uploadTitle"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
+            android:textSize="16sp"
             android:layout_alignParentEnd="true"
             android:textAppearance="?android:textAppearanceSmall"/>
 
@@ -76,5 +81,5 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="16dp"/>
 </RelativeLayout>

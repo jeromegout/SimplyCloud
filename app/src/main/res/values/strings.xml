@@ -1,5 +1,5 @@
 <resources>
-	<string name="app_name">OneShare</string>
+	<string name="app_name">Send4U</string>
 	<string name="activity_gallery_no_images">No photos</string>
 	<string name="sendStatusLabel">Status:</string>
 </resources>

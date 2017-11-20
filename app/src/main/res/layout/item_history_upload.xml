@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="54dp">
+                android:layout_height="64dp">
 
     <ImageView
         android:id="@+id/dateImage"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginTop="4dp"
+        android:layout_centerVertical="true"
         android:src="@drawable/ic_today_black_24dp"
         />
     <RelativeLayout
@@ -23,8 +23,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Soirée anniv Stephane"
-            android:textAppearance="?android:textAppearanceListItem"
-            android:textSize="16sp"
+            android:textSize="24sp"
+            android:ellipsize="end"
+            android:textColor="@color/colorPrimaryText"
             android:textStyle="normal"
             />
 
@@ -37,7 +38,7 @@
             android:gravity="center_vertical"
             android:text="5/13/2017-4:56"
             android:textColor="@color/colorAccent"
-            android:textSize="12sp"/>
+            android:textSize="16sp"/>
         <TextView
             android:id="@+id/uploadDetails"
             android:layout_width="wrap_content"
@@ -47,7 +48,7 @@
             android:text="3 files"
             android:layout_below="@id/uploadTitle"
             android:layout_toEndOf="@id/uploadDate"
-            android:textSize="12sp"
+            android:textSize="16sp"
             />
 
     </RelativeLayout>
@@ -61,7 +62,7 @@
         android:gravity="center_vertical"
         android:text="85 MB"
         android:layout_centerInParent="true"
-        android:textSize="14sp"
+        android:textSize="18sp"
         />
 
 </RelativeLayout>
