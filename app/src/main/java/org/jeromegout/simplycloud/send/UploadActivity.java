@@ -179,7 +179,7 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
 		String name;
 		String title = titleEdit.getText().toString();
 		if(title.length() > 0) {
-			name = title;
+			name = title.replaceAll("[^a-zA-Z0-9_\\-\\.]", "_");
 		} else {
 			name = getResources().getString(R.string.app_name);
 		}
