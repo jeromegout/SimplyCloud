@@ -3,11 +3,13 @@ package org.jeromegout.simplycloud.send;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -21,6 +23,7 @@ import org.jeromegout.simplycloud.history.HistoryModel;
 import org.jeromegout.simplycloud.history.UploadItem;
 import org.jeromegout.simplycloud.hosts.HostManager;
 import org.jeromegout.simplycloud.hosts.HostServices;
+import org.jeromegout.simplycloud.selection.SelectionActivity;
 import org.jeromegout.simplycloud.selection.fragments.FileUtil;
 
 import java.io.File;
@@ -185,4 +188,20 @@ public class UploadActivity extends BaseActivity implements ArchiveMaker.OnArchi
 			return null;
 		}
 	}
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                //- force to open the selection activity
+                Intent intent = new Intent(this, SelectionActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList("selection", (ArrayList<? extends Parcelable>) filesUri);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                finish();
+        }
+        return true;
+    }
 }

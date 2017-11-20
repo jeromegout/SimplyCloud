@@ -64,7 +64,7 @@ public class ShareActivity extends BaseActivity implements HostServices.OnListen
         if(item != null) {
             String shareBody = "Here is the link to download the files I want to share with you\n\n";
             shareBody += item.getLinks().downloadLink;
-            shareBody += "\n\n(sent with" + getResources().getString(R.string.app_name) + ")";
+            shareBody += "\n\n(sent with " + getResources().getString(R.string.app_name) + ")";
             Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
             sharingIntent.setType("text/plain");
             sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Link");

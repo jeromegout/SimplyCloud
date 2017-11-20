@@ -73,9 +73,8 @@ public class SelectionActivity extends BaseActivity implements SelectionModel.Se
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		viewPager = findViewById(R.id.viewpager);
-
+        SelectionModel.instance.addSelectionListener(this);
+        viewPager = findViewById(R.id.viewpager);
 		tabLayout = findViewById(R.id.tabs);
 		tabLayout.setupWithViewPager(viewPager);
 		setViewPager(viewPager);
@@ -102,8 +101,13 @@ public class SelectionActivity extends BaseActivity implements SelectionModel.Se
 					}
 				}
 		);
-		counterFab = (CounterFab) findViewById(R.id.counter_fab);
+		counterFab = findViewById(R.id.counter_fab);
 		counterFab.setOnClickListener(this);
+
+        if (getIntent().getExtras() != null) {
+            List<Uri> list = getIntent().getExtras().getParcelableArrayList("selection");
+            SelectionModel.instance.setSelection(list);
+        }
 
 		if (savedInstanceState == null) {
 			setResult(RESULT_CANCELED);
@@ -174,15 +178,11 @@ public class SelectionActivity extends BaseActivity implements SelectionModel.Se
 		}
 	}
 
-	@Override
-	public void onAttachedToWindow() {
-		super.onAttachedToWindow();
-		SelectionModel.instance.addSelectionListener(this);
-	}
-
     @Override
-    public void onDetachedFromWindow() {
+    protected void onDestroy() {
         SelectionModel.instance.removeSelectionListener(this);
-        super.onDetachedFromWindow();
+        //- clear the selection
+        SelectionModel.instance.clearSelection();
+        super.onDestroy();
     }
 }

@@ -115,7 +115,11 @@ public class UploadItem implements Parcelable {
     }
 
     public String getHumanReadableTitle() {
-        return title != null && title.length() > 0 ? title : "Unnamed archive";
+        String ret = "Unnamed archive";
+        if(title != null && title.length() > 0) {
+            ret = title.substring(0, 1).toUpperCase()+title.substring(1);
+        }
+        return ret;
     }
 
     public String getTitle() {
