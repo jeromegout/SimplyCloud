@@ -5,7 +5,8 @@
 	<color name="colorAccent">#3f51b5</color>
 	<color name="colorIcons">#ffffff</color>
 	<color name="colorPrimaryText">#212121</color>
-	<color name="colorSecondaryText">#757575</color>
+    <color name="colorPrimaryText_uncompleted">#26212121</color>
+    <color name="colorSecondaryText">#757575</color>
 	<color name="colorTabSelectedIcon">#FFFFFFFF</color>
 	<color name="colorTabUnselectedIcon">#B2FFFFFF</color>
     <color name="selection_bucket_text_background">#66000000</color>

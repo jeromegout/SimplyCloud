@@ -7,4 +7,8 @@
     <dimen name="selection_item_offset">1dp</dimen>
     <dimen name="selection_item_check_padding">16dp</dimen>
     <dimen name="selection_item_text_padding">8dp</dimen>
+    <dimen name="history_text_title">24sp</dimen>
+    <dimen name="history_date">16sp</dimen>
+    <dimen name="history_size">18sp</dimen>
+
 </resources>

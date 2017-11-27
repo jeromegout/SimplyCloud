@@ -7,6 +7,7 @@ import net.gotev.uploadservice.okhttp.OkHttpStack;
 
 import org.jeromegout.simplycloud.history.HistoryModel;
 import org.jeromegout.simplycloud.hosts.HostManager;
+import org.jeromegout.simplycloud.hosts.StubHost;
 import org.jeromegout.simplycloud.hosts.free.FreeHost;
 
 import java.util.concurrent.TimeUnit;
@@ -35,7 +36,9 @@ public class Initializer extends Application {
         //- hostManager
         HostManager.instance.init();
         //- by default dl.free.fr is used
-        HostManager.instance.setCurrentId(FreeHost.HOST_ID);
+//        HostManager.instance.setCurrentId(FreeHost.HOST_ID);
+        HostManager.instance.setCurrentId(StubHost.HOST_ID);
+
 
         //- Model
         HistoryModel.instance.setContext(this);

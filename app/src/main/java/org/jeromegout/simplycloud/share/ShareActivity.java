@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +40,8 @@ public class ShareActivity extends BaseActivity implements HostServices.OnListen
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         recyclerView.setAdapter(fileAdapter);
+        ImageView logo = findViewById(R.id.logo);
+        logo.setImageDrawable(getResources().getDrawable(HostManager.instance.getHostById(item.getLinks().hostId).getHostLogoId()));
         TextView titleView = findViewById(R.id.uploadTitle);
         titleView.setText(item.getHumanReadableTitle());
         TextView dateView = findViewById(R.id.uploadDate);

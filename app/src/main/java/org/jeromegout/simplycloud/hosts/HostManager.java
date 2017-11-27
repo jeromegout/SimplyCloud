@@ -49,5 +49,6 @@ public class HostManager {
 	 */
 	public void init() {
 		registerHost(new FreeHost());
+		registerHost(new StubHost());
 	}
 }

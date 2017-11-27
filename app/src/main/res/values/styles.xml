@@ -12,4 +12,47 @@
 		<item name="windowNoTitle">true</item>
 		<item name="windowActionBar">false</item>
 	</style>
+
+    <style name="HistoryTitle_completed" >
+        <item name="android:textSize">@dimen/history_text_title</item>
+        <item name="android:textColor">@color/colorPrimaryText</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="HistoryTitle_uncompleted" >
+        <item name="android:textSize">@dimen/history_text_title</item>
+        <item name="android:textColor">@color/colorPrimaryText_uncompleted</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+    <style name="HistoryDate_completed">
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textSize">@dimen/history_date</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="HistoryDate_uncompleted">
+        <item name="android:textColor">@color/colorPrimaryText_uncompleted</item>
+        <item name="android:textSize">@dimen/history_date</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+    <style name="HistoryDetails_completed">
+        <item name="android:textColor">@color/colorSecondaryText</item>
+        <item name="android:textSize">@dimen/history_date</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="HistoryDetails_uncompleted">
+        <item name="android:textColor">@color/colorPrimaryText_uncompleted</item>
+        <item name="android:textSize">@dimen/history_date</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+    <style name="HistorySize_completed">
+        <item name="android:textColor">@color/colorSecondaryText</item>
+        <item name="android:textSize">@dimen/history_size</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <style name="HistorySize_uncompleted">
+        <item name="android:textColor">@color/colorPrimaryText_uncompleted</item>
+        <item name="android:textSize">@dimen/history_size</item>
+        <item name="android:textStyle">italic</item>
+    </style>
 </resources>

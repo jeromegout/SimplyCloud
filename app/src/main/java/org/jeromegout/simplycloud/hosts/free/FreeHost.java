@@ -78,7 +78,6 @@ public class FreeHost extends Uploader implements HostServices {
 
     @Override
     public void onUploadCompleted(Context context, UploadInfo info, ServerResponse response) {
-        super.onUploadCompleted(context, info, response); //- this calls super.finishUpload
         //- retrieving the monitoring url from the response
         String monURL = response.getHeaders().get("Location");
         Logging.d(monURL);
@@ -147,16 +146,7 @@ public class FreeHost extends Uploader implements HostServices {
                     //- we reached the end of the page without finding the refresh marker
                     //- we can return the collected info
                     UploadLinks links = findLinks(response);
-                    HistoryModel.instance.setLinks(uploadId, links);
-                    UploadItem item = HistoryModel.instance.getUploadItem(uploadId);
-                    if(item !=null && links != null) {
-                        Toast.makeText(context, item.getTitle()+ " successfully uploaded on "+getHostId(), Toast.LENGTH_LONG).show();
-                        Logging.d("FINISHED !!!!!!");
-                        Logging.d("Download: "+links.downloadLink);
-                        Logging.d("Delete:   "+links.deleteLink);
-                    } else {
-                        Toast.makeText(context, "Problem uploading "+item.getTitle()+ " on "+getHostId(), Toast.LENGTH_LONG).show();
-                    }
+                    finishUpload(context, uploadId, links);
                 }
             }
         }, new Response.ErrorListener() {

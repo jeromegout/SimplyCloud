@@ -3,6 +3,7 @@ package org.jeromegout.simplycloud.history;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
@@ -48,17 +49,39 @@ public class UploadAdapter extends RecyclerView.Adapter <UploadAdapter.Holder> i
         }
 
         void bind(final UploadItem item) {
+            boolean completed = item.getLinks() != null;
             dateIcon.setImageDrawable(createIcon(item.getUploadDate()));
             uploadTitle.setText(item.getHumanReadableTitle());
             uploadDetails.setText(String.format("%d files", item.getContent().size()));
             uploadDate.setText(item.getHumanReadableDateTime());
             uploadSize.setText(item.getHumanReadableSize());
+            if(completed) {
+                dateIcon.setAlpha(1f);
+                setTextAppearance(uploadTitle, R.style.HistoryTitle_completed);
+                setTextAppearance(uploadDetails, R.style.HistoryDetails_completed);
+                setTextAppearance(uploadDate, R.style.HistoryDate_completed);
+                setTextAppearance(uploadSize, R.style.HistorySize_completed);
+            } else {
+                dateIcon.setAlpha(0.38f);
+                setTextAppearance(uploadTitle, R.style.HistoryTitle_uncompleted);
+                setTextAppearance(uploadDetails, R.style.HistoryDetails_uncompleted);
+                setTextAppearance(uploadDate, R.style.HistoryDate_uncompleted);
+                setTextAppearance(uploadSize, R.style.HistorySize_uncompleted);
+            }
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     openUploadHistory(item);
                 }
             });
+        }
+    }
+
+    private void setTextAppearance(TextView view, int id) {
+        if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+            view.setTextAppearance(id);
+        } else {
+            view.setTextAppearance(this.context, id);
         }
     }
 

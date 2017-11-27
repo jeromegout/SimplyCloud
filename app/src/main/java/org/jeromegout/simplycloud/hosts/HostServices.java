@@ -16,6 +16,15 @@ public interface HostServices {
 
     int getHostLogoId();
 
+    /**
+     * Check if the given URL is still valid on the server.
+     * Listener is used to notify with caller.
+     * Implementation typically calls listener.onUploadUpdate(HostServices.OK)
+     * in case of the file can still be downloaded
+     * @param context
+     * @param archiveURL
+     * @param listener
+     */
     void archiveStillAlive(Context context, String archiveURL, OnListener listener);
 
     void uploadArchive(Context context, File archive, String uploadId);
